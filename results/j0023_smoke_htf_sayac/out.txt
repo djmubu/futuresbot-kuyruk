@@ -1,0 +1,8 @@
+    htf_yon_red          1
+    htf_yon_gecti        13
+    htf_yon_gecti        5
+    htf_yon_gecti        29
+  14 smoke_htf_flag/A_base_c00.trades.csv
+  15 smoke_reg/A_base_c00.trades.csv
+  29 total
+
