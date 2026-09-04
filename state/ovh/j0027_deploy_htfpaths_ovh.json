@@ -1,8 +1,10 @@
 {
- "status": "running",
+ "status": "failed",
  "queued": "2026-09-04 20:13 TR",
  "box": "ovh",
  "updated": "2026-09-04 20:13 TR",
  "started": "2026-09-04 20:13 TR",
- "type": "deploy"
+ "type": "deploy",
+ "finished": "2026-09-04 20:13 TR",
+ "hata": "md5 uyusmadi, GERI ALINDI: {\"sim_e2e.py\": {\"beklenen\": \"3717aff511964b105c9b598590c66b24\", \"bulunan\": \"d814f9cf13538daf2738597809c4bf81\"}}"
 }
