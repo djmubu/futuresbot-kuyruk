@@ -1,0 +1,6 @@
+{"id": "j0015_crowd_oos", "box": "ovh", "type": "run_ab", "out": "crowd_oos",
+ "args": ["--offset", "310", "--limit", "130", "--chunk", "4", "--jobs", "62", "--days", "180",
+          "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
+          "--b-flags=--crowd-calendar takvim_ucluTaban.csv", "--ab-set="],
+ "expect_md5": {"sim_e2e.py": "5cc8283de38cfc4ae83fc0bb3914ae64", "run_ab.py": "f477d4fa17f9713f62413cb60ba3b5c7"},
+ "analiz": ["crowd_oos"]}

@@ -1,0 +1,1 @@
+{"id": "j0014_determinizm", "box": "ovh", "type": "script", "script": "scripts/sh.py", "args": ["md5sum crowd1/B_bayrak_c00.trades.csv dss1/A_base_c00.trades.csv crowd1/B_bayrak_c40.trades.csv dss1/A_base_c40.trades.csv; md5sum sim_e2e.py run_ab.py"]}
