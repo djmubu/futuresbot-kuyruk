@@ -1,0 +1,7 @@
+777d9b8ab873ec505613763d956413ff  smoke_b2_old/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_b2_old/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_b2_old/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_b2_new/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_b2_new/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_b2_new/A_base_c02.trades.csv
+
