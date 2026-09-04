@@ -1,0 +1,48 @@
+
+######## retest2_oos : A breakout+momentum n=994 | B n=438 | eklenen (retest-zamanli) n=361
+
+== A taban (breakout+momentum, impulsta giris): n=994 toplamR=-38.5 mR=-0.0387 WR=42.6% ortKazanc=+1.348 ortKayip=-1.066 (kazanc/kayip=1.26) besabas WR=44.2%
+  close_reason: sl 565 (57%, R -597.9), tp 417 (42%, R +557.7), sl_gap 6 (1%, R -10.7), tp_gap 6 (1%, R +12.4)
+  stop mesafesi %: medyan 1.96  q1 1.21 q3 3.25 | sure_dk medyan 116.0
+  cipa tuttu: n=311 (31%) mR=+1.347
+  cipa kirildi: n=532 (54%) mR=-0.879
+  MAE(R) medyan 1.01 q3 1.08 | MFE(R) medyan 1.06 q3 1.48 | MFE>=1.5R olan 22% | MFE>=1R ama kayip 9%
+  aylik: 2026-04 n359 -55.9 | 2026-05 n283 +14.9 | 2026-06 n27 -16.5 | 2026-07 n153 -33.9 | 2026-08 n172 +52.9
+  yol/yon: breakout/long n215 mR-0.307 | breakout/short n8 mR-0.483 | momentum/long n771 mR+0.041
+
+== B eklenen (retest teyidinde giris): n=361 toplamR=-6.5 mR=-0.0180 WR=41.6% ortKazanc=+1.456 ortKayip=-1.066 (kazanc/kayip=1.37) besabas WR=42.3%
+  close_reason: sl 206 (57%, R -221.4), tp 147 (41%, R +216.8), sl_gap 5 (1%, R -3.5), tp_gap 3 (1%, R +1.7)
+  stop mesafesi %: medyan 1.98  q1 1.19 q3 3.28 | sure_dk medyan 158.0
+  cipa tuttu: n=108 (30%) mR=+1.467
+  cipa kirildi: n=189 (52%) mR=-0.955
+  MAE(R) medyan 1.01 q3 1.07 | MFE(R) medyan 1.06 q3 1.54 | MFE>=1.5R olan 30% | MFE>=1R ama kayip 13%
+  aylik: 2026-04 n114 -14.2 | 2026-05 n102 +7.9 | 2026-06 n17 -6.0 | 2026-07 n62 -13.3 | 2026-08 n66 +19.1
+  yol/yon: breakout/long n88 mR-0.397 | breakout/short n5 mR-0.089 | momentum/long n268 mR+0.108
+
+  ESLESEN CIFT (ayni sembol/yon, retest girisi sinyalden <=8s sonra): n=608 | gecikme medyan 45 dk | giris fiyati kazanci medyan +0.05% | A R +26.0 -> B R -44.3 (mR +0.043 -> -0.073)
+  ciftlerde stop mesafesi %: A medyan 1.99 -> B medyan 2.08 (ayni yapisal stop, giris yaklasti mi?)
+
+######## retest3_oos : A breakout+momentum n=994 | B n=314 | eklenen (retest-zamanli) n=282
+
+== A taban (breakout+momentum, impulsta giris): n=994 toplamR=-38.5 mR=-0.0387 WR=42.6% ortKazanc=+1.348 ortKayip=-1.066 (kazanc/kayip=1.26) besabas WR=44.2%
+  close_reason: sl 565 (57%, R -597.9), tp 417 (42%, R +557.7), sl_gap 6 (1%, R -10.7), tp_gap 6 (1%, R +12.4)
+  stop mesafesi %: medyan 1.96  q1 1.21 q3 3.25 | sure_dk medyan 116.0
+  cipa tuttu: n=311 (31%) mR=+1.347
+  cipa kirildi: n=532 (54%) mR=-0.879
+  MAE(R) medyan 1.01 q3 1.08 | MFE(R) medyan 1.06 q3 1.48 | MFE>=1.5R olan 22% | MFE>=1R ama kayip 9%
+  aylik: 2026-04 n359 -55.9 | 2026-05 n283 +14.9 | 2026-06 n27 -16.5 | 2026-07 n153 -33.9 | 2026-08 n172 +52.9
+  yol/yon: breakout/long n215 mR-0.307 | breakout/short n8 mR-0.483 | momentum/long n771 mR+0.041
+
+== B eklenen (retest teyidinde giris): n=282 toplamR=-33.1 mR=-0.1175 WR=40.8% ortKazanc=+1.271 ortKayip=-1.074 (kazanc/kayip=1.18) besabas WR=45.8%
+  close_reason: sl 162 (57%, R -175.8), tp 111 (39%, R +143.9), tp_gap 5 (2%, R +2.1), sl_gap 4 (1%, R -3.4)
+  stop mesafesi %: medyan 2.07  q1 1.25 q3 3.20 | sure_dk medyan 150.0
+  cipa tuttu: n=79 (28%) mR=+1.265
+  cipa kirildi: n=139 (49%) mR=-0.972
+  MAE(R) medyan 1.01 q3 1.08 | MFE(R) medyan 0.84 q3 1.47 | MFE>=1.5R olan 22% | MFE>=1R ama kayip 11%
+  aylik: 2026-04 n91 -14.1 | 2026-05 n88 -9.5 | 2026-06 n15 -13.3 | 2026-07 n46 -15.7 | 2026-08 n42 +19.6
+  yol/yon: breakout/long n73 mR-0.268 | breakout/short n3 mR-0.230 | momentum/long n206 mR-0.063
+
+  ESLESEN CIFT (ayni sembol/yon, retest girisi sinyalden <=8s sonra): n=557 | gecikme medyan 75 dk | giris fiyati kazanci medyan +0.26% | A R -15.0 -> B R -67.2 (mR -0.027 -> -0.121)
+  ciftlerde stop mesafesi %: A medyan 2.24 -> B medyan 2.15 (ayni yapisal stop, giris yaklasti mi?)
+
+NOT: 'eklenen' = B'de olup A'da olmayan (sembol, acilis, yon) islemler = retest teyidiyle acilanlar. Harita (giris_mimari) tek TP 1.5R ile olcmustu; burada motorun gercek cikisi.
