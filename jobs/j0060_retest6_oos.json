@@ -1,28 +1,28 @@
 {
- "id": "j0058_retest4",
- "box": "ovh",
+ "id": "j0060_retest6_oos",
+ "box": "box2",
  "type": "run_ab",
- "out": "retest4",
+ "out": "retest6_oos",
  "args": [
   "--offset",
-  "0",
-  "--limit",
   "310",
+  "--limit",
+  "130",
   "--chunk",
   "4",
   "--jobs",
-  "90",
+  "38",
   "--days",
   "180",
   "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
-  "--b-flags=--entry-retest --retest-tf 5 --retest-atr 1.0 --retest-bars 64",
+  "--b-flags=--entry-retest --retest-tf 5 --retest-atr 1.0 --retest-bars 32 --retest-level anchor",
   "--ab-set="
  ],
  "expect_md5": {
-  "sim_e2e.py": "844b08598314556704aaa0222f0a52e5",
+  "sim_e2e.py": "af574b043500c6da0a535e76471cbc7e",
   "run_ab.py": "f477d4fa17f9713f62413cb60ba3b5c7"
  },
  "analiz": [
-  "retest4"
+  "retest6_oos"
  ]
 }

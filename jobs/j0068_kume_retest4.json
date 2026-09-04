@@ -1,5 +1,5 @@
 {
- "id": "j0059_kume_retest4",
+ "id": "j0068_kume_retest4",
  "box": "ovh",
  "type": "script",
  "script": "scripts/kume_stats.py",

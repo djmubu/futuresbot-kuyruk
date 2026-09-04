@@ -1,8 +1,8 @@
 {
- "id": "j0062_retest5",
+ "id": "j0058_retest6",
  "box": "ovh",
  "type": "run_ab",
- "out": "retest5",
+ "out": "retest6",
  "args": [
   "--offset",
   "0",
@@ -15,14 +15,14 @@
   "--days",
   "180",
   "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
-  "--b-flags=--entry-retest --retest-tf 15 --retest-pct 0.5 --retest-bars 32",
+  "--b-flags=--entry-retest --retest-tf 5 --retest-atr 1.0 --retest-bars 32 --retest-level anchor",
   "--ab-set="
  ],
  "expect_md5": {
-  "sim_e2e.py": "844b08598314556704aaa0222f0a52e5",
+  "sim_e2e.py": "af574b043500c6da0a535e76471cbc7e",
   "run_ab.py": "f477d4fa17f9713f62413cb60ba3b5c7"
  },
  "analiz": [
-  "retest5"
+  "retest6"
  ]
 }

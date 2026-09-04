@@ -154,6 +154,12 @@ ap.add_argument("--retest-paths", default="breakout,momentum", dest="retest_path
 ap.add_argument("--retest-tf", type=int, default=15, dest="retest_tf", choices=[5, 15, 60],
                 help="teyit bari: 5 = 1m'den toplanan 5m alt-barlar (15m taramasinda 3 alt-bar sirayla; giris tarama kapanisinda), "
                      "15 = tarama bari; 60 = 1h bari (saat kapanisina denk gelen taramada)")
+ap.add_argument("--retest-level", default="signal", dest="retest_level", choices=["signal", "anchor"],
+                help="E129 hipotez 1/2: retest seviyesi 'signal' = P0*(1-X) (varsayilan) | 'anchor' = sinyalin A+ cipasi (v2_anchor_support/resistance): "
+                     "dokunus = low <= cipa*(1+tol), teyit = close>open ve close>=cipa; cipa yoksa signal seviyesine duser (sayac retest_cipa_yok)")
+ap.add_argument("--retest-tol", type=float, default=0.2, dest="retest_tol", help="anchor modunda dokunus/gecersizleme toleransi %% (motor retest_confirm ile ayni: 0.2)")
+ap.add_argument("--retest-cancel", default="sl", dest="retest_cancel", choices=["sl", "close"],
+                help="iptal kurali: 'sl' = v2_sl dokunusu (varsayilan) | 'close' = ek olarak alt-bar kapanisi cipa*(1-tol) altinda (motor 'invalidated' esdegeri)")
 ap.add_argument("--retest-atr", type=float, default=0.0, dest="retest_atr",
                 help="geri cekilme esigi = k x ATR(14, 15m) / fiyat (yuzde yerine). >0 ise --retest-pct yok sayilir. E124 secimi: 0.5")
 ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
@@ -552,10 +558,13 @@ class _Probe:
                         else:
                             _subs.append((float(_bar["open"]), float(_bar["high"]), float(_bar["low"]), float(_bar["close"])))
                         _sonuc = None
+                        _touch = _pend.get("touch", _pend["lvl"]); _cancl = _pend.get("cancel_close", 0.0)
                         for (_op, _hi, _lo, _cl) in _subs:
                             if (_v2 > 0) and ((_lo <= _v2) if _long else (_hi >= _v2)):
                                 _sonuc = "kirildi"; break
-                            if (_lo <= _pend["lvl"]) if _long else (_hi >= _pend["lvl"]):
+                            if _cancl > 0 and ((_cl < _cancl) if _long else (_cl > _cancl)):
+                                _sonuc = "kirildi"; self._rt_count("retest_kapanis_iptal"); break
+                            if (_lo <= _touch) if _long else (_hi >= _touch):
                                 _pend["touched"] = True
                             if _conf_ok and _pend["touched"] and ((_cl > _op and _cl >= _pend["lvl"]) if _long else (_cl < _op and _cl <= _pend["lvl"])):
                                 _sonuc = ("giris", _cl); break
@@ -586,7 +595,18 @@ class _Probe:
                     _srd = (getattr(_fresh, "indicators_snapshot", None) or {}).get("sr_decision") or {}
                     try: _v2 = float(_srd.get("v2_sl") or 0)
                     except Exception: _v2 = 0.0
-                    self.retest_pending[_sym] = {"sig": _fresh, "p0": _p0, "lvl": _p0 * (1 - _X) if _long else _p0 * (1 + _X),
+                    _lvl = _p0 * (1 - _X) if _long else _p0 * (1 + _X); _touch = _lvl; _cancl = 0.0
+                    if str(getattr(A, "retest_level", "signal")) == "anchor":
+                        try: _anc = float((_srd.get("v2_anchor_support") if _long else _srd.get("v2_anchor_resistance")) or 0)
+                        except Exception: _anc = 0.0
+                        _tol = float(getattr(A, "retest_tol", 0.2) or 0) / 100.0
+                        if _anc > 0 and ((_anc < _p0) if _long else (_anc > _p0)):
+                            _lvl = _anc; _touch = _anc * (1 + _tol) if _long else _anc * (1 - _tol)
+                            if str(getattr(A, "retest_cancel", "sl")) == "close":
+                                _cancl = _anc * (1 - _tol) if _long else _anc * (1 + _tol)
+                        else:
+                            self._rt_count("retest_cipa_yok")
+                    self.retest_pending[_sym] = {"sig": _fresh, "p0": _p0, "lvl": _lvl, "touch": _touch, "cancel_close": _cancl,
                                                  "long": _long, "v2_sl": _v2, "bars": 0, "touched": False}
                     self._rt_count("retest_beklemeye_alindi" if _pend is None else "retest_yenilendi")
                     sig = None

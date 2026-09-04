@@ -1,9 +1,9 @@
 {
- "id": "j0061_kume_retest4_oos",
+ "id": "j0061_kume_retest6_oos",
  "box": "box2",
  "type": "script",
  "script": "scripts/kume_stats.py",
  "args": [
-  "retest4_oos"
+  "retest6_oos"
  ]
 }

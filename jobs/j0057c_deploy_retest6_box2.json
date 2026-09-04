@@ -1,0 +1,11 @@
+{
+ "id": "j0057c_deploy_retest6_box2",
+ "box": "box2",
+ "type": "deploy",
+ "files": {
+  "code/sim_e2e.py": "sim_e2e.py"
+ },
+ "expect_md5": {
+  "sim_e2e.py": "af574b043500c6da0a535e76471cbc7e"
+ }
+}

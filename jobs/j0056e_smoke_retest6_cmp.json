@@ -1,0 +1,9 @@
+{
+ "id": "j0056e_smoke_retest6_cmp",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "md5sum smoke_reg/A_base_c0*.trades.csv smoke_retest6_reg/A_base_c0*.trades.csv; echo SIG; md5sum smoke_retest3_flag/A_base_c0*.trades.csv smoke_retest6_sig/A_base_c0*.trades.csv; echo ANC; grep -h 'retest_' smoke_retest6_anc/logs/A_base_c0*.log; wc -l smoke_retest6_anc/A_base_c0*.trades.csv"
+ ]
+}
