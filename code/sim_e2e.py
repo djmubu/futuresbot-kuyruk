@@ -151,6 +151,8 @@ ap.add_argument("--entry-retest", action="store_true", dest="entry_retest",
 ap.add_argument("--retest-pct", type=float, default=0.5, dest="retest_pct", help="geri cekilme esigi %% (varsayilan 0.5 = kazananlarin MAE medyani)")
 ap.add_argument("--retest-bars", type=int, default=8, dest="retest_bars", help="bekleme suresi, tarama bari (15m) sayisi (varsayilan 8 = 2 saat)")
 ap.add_argument("--retest-paths", default="breakout,momentum", dest="retest_paths", help="retest uygulanacak yollar (varsayilan breakout,momentum)")
+ap.add_argument("--retest-tf", type=int, default=15, dest="retest_tf", choices=[15, 60],
+                help="teyit bari: 15 = tarama bari (15m); 60 = 1h bari (yalniz saat kapanisina denk gelen 15m taramasinda degerlendirilir; touched 15m low'larindan)")
 ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
                 help="E118: --htf-align yalniz bu yollara uygulansin (orn. breakout,momentum; mr = mean reversion tanimi geregi karsi-trend). Bos = tum yollar.")
 ap.add_argument("--toy-sizer", action="store_true", dest="toy_sizer",
@@ -521,8 +523,18 @@ class _Probe:
                     _pend["bars"] += 1
                     _df15 = bar_store.get_closed_candles(_sym, adapter._cfg.scan_timeframe if 'adapter' in globals() else "15m")
                     _bar = _df15.iloc[-1] if _df15 is not None and len(_df15) else None
+                    _tf = int(getattr(A, "retest_tf", 15) or 15)
+                    _conf_ok = True
+                    if _bar is not None and _tf == 60:
+                        # 1h teyit: yalniz 1h bari bu 15m ile kapandiysa (close_time esit) degerlendir; teyit o,c 1h barindan, touch 15m low'undan
+                        _df1h = bar_store.get_closed_candles(_sym, "1h")
+                        _b1h = _df1h.iloc[-1] if _df1h is not None and len(_df1h) else None
+                        if _b1h is None or int(_b1h["close_time"]) != int(_bar["close_time"]):
+                            _conf_ok = False
                     if _bar is not None:
                         _lo, _hi, _op, _cl = float(_bar["low"]), float(_bar["high"]), float(_bar["open"]), float(_bar["close"])
+                        if _tf == 60 and _conf_ok:
+                            _op, _cl = float(_b1h["open"]), float(_b1h["close"])
                         _long = _pend["long"]
                         _v2 = _pend["v2_sl"]
                         _broke = (_v2 > 0) and ((_lo <= _v2) if _long else (_hi >= _v2))
@@ -531,7 +543,7 @@ class _Probe:
                         else:
                             if (_lo <= _pend["lvl"]) if _long else (_hi >= _pend["lvl"]):
                                 _pend["touched"] = True
-                            _teyit = _pend["touched"] and ((_cl > _op and _cl >= _pend["lvl"]) if _long else (_cl < _op and _cl <= _pend["lvl"]))
+                            _teyit = _conf_ok and _pend["touched"] and ((_cl > _op and _cl >= _pend["lvl"]) if _long else (_cl < _op and _cl <= _pend["lvl"]))
                             if _teyit:
                                 _s = _pend["sig"]
                                 from decimal import Decimal as _Dz
