@@ -1,0 +1,11 @@
+{
+ "id": "j0072_deploy_retest6b_ovh",
+ "box": "ovh",
+ "type": "deploy",
+ "files": {
+  "code/sim_e2e.py": "sim_e2e.py"
+ },
+ "expect_md5": {
+  "sim_e2e.py": "46ffbdf0978fa22777b7c94a508f40fa"
+ }
+}

@@ -202,6 +202,7 @@ def main():
     (REPO / "state" / BOX).mkdir(parents=True, exist_ok=True)
     hb = REPO / "state" / BOX / "_heartbeat.json"
     n = 0
+    _own_md5 = md5(Path(__file__))
     while True:
         try:
             sync_pull()
@@ -210,15 +211,29 @@ def main():
                 load = os.getloadavg()
                 hb.write_text(json.dumps({"box": BOX, "zaman": tr_now(), "load": [round(x, 1) for x in load]}))
                 commit_push(f"[{BOX}] nabiz")
-            for job in pending_jobs():
+            # E131: her isten SONRA bekleyen liste YENIDEN hesaplanir (araya eklenen/silinen isler etkili olur; eski toplu-liste yarisi yok)
+            while True:
+                _pj = pending_jobs()
+                if not _pj:
+                    break
+                job = _pj[0]
                 write_state(job["id"], status="queued", queued=tr_now())
                 run_job(job)   # sirayla, tek is
                 sync_pull()
+                if md5(Path(__file__)) != _own_md5:
+                    (REPO / "state" / BOX / "_daemon_reexec.txt").write_text(tr_now() + " kuyruk.py degisti, yeniden basliyor\n")
+                    os.execv(sys.executable, [sys.executable, str(Path(__file__).resolve()), BOX])
         except Exception as e:
             try:
                 (REPO / "state" / BOX / "_daemon_hata.txt").write_text(tr_now() + " " + str(e) + "\n" + traceback.format_exc()[-2000:])
             except Exception:
                 pass
+        try:
+            if md5(Path(__file__)) != _own_md5:
+                (REPO / "state" / BOX / "_daemon_reexec.txt").write_text(tr_now() + " kuyruk.py degisti (bosta), yeniden basliyor\n")
+                os.execv(sys.executable, [sys.executable, str(Path(__file__).resolve()), BOX])
+        except Exception:
+            pass
         time.sleep(POLL)
 
 if __name__ == "__main__":

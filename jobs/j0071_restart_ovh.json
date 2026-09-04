@@ -1,0 +1,7 @@
+{
+ "id": "j0071_restart_ovh",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/daemon_restart.py",
+ "args": []
+}

@@ -1,0 +1,9 @@
+{
+ "id": "j0062d_kume_retest6b_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "retest6b_oos"
+ ]
+}

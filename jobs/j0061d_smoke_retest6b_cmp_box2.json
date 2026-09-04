@@ -1,0 +1,9 @@
+{
+ "id": "j0061d_smoke_retest6b_cmp_box2",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "grep -h 'retest_' smoke_retest6b_anc/logs/A_base_c0*.log; wc -l smoke_retest6b_anc/A_base_c0*.trades.csv"
+ ]
+}

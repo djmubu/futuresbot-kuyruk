@@ -1,0 +1,28 @@
+{
+ "id": "j0064_retest7b_oos",
+ "box": "box2",
+ "type": "run_ab",
+ "out": "retest7b_oos",
+ "args": [
+  "--offset",
+  "310",
+  "--limit",
+  "130",
+  "--chunk",
+  "4",
+  "--jobs",
+  "38",
+  "--days",
+  "180",
+  "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
+  "--b-flags=--entry-retest --retest-tf 5 --retest-atr 1.0 --retest-bars 32 --retest-level anchor --retest-cancel close",
+  "--ab-set="
+ ],
+ "expect_md5": {
+  "sim_e2e.py": "46ffbdf0978fa22777b7c94a508f40fa",
+  "run_ab.py": "f477d4fa17f9713f62413cb60ba3b5c7"
+ },
+ "analiz": [
+  "retest7b_oos"
+ ]
+}

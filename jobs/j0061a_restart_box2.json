@@ -1,0 +1,7 @@
+{
+ "id": "j0061a_restart_box2",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/daemon_restart.py",
+ "args": []
+}

@@ -599,6 +599,11 @@ class _Probe:
                     if str(getattr(A, "retest_level", "signal")) == "anchor":
                         try: _anc = float((_srd.get("v2_anchor_support") if _long else _srd.get("v2_anchor_resistance")) or 0)
                         except Exception: _anc = 0.0
+                        if not (_anc > 0 and ((_anc < _p0) if _long else (_anc > _p0))):
+                            # A+ cipa yoksa: stopun asildigi en yakin seviye (sr_decision 'graceful degradation' ile ayni kaynak)
+                            try: _anc = float((_srd.get("nearest_support") if _long else _srd.get("nearest_resistance")) or 0)
+                            except Exception: _anc = 0.0
+                            if _anc > 0: self._rt_count("retest_cipa_nearest")
                         _tol = float(getattr(A, "retest_tol", 0.2) or 0) / 100.0
                         if _anc > 0 and ((_anc < _p0) if _long else (_anc > _p0)):
                             _lvl = _anc; _touch = _anc * (1 + _tol) if _long else _anc * (1 - _tol)
