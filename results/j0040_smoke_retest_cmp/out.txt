@@ -1,0 +1,37 @@
+777d9b8ab873ec505613763d956413ff  smoke_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_reg/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_retest_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_retest_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_retest_reg/A_base_c02.trades.csv
+      SR hard gate: no_retest_confirmed                                      26
+    retest_beklemeye_alindi  20
+    retest_giris             4
+    retest_kirildi           3
+    retest_yenilendi         25
+    retest_zaman_asimi       13
+TRADES CSV: /root/bot/smoke_retest_flag/A_base_c00.trades.csv (5 satir)
+JSON: /root/bot/smoke_retest_flag/A_base_c00.json
+    retest_beklemeye_alindi  22
+    retest_giris             6
+    retest_kirildi           5
+    retest_yenilendi         25
+    retest_zaman_asimi       11
+TRADES CSV: /root/bot/smoke_retest_flag/A_base_c01.trades.csv (3 satir)
+JSON: /root/bot/smoke_retest_flag/A_base_c01.json
+      SR hard gate: no_retest_confirmed                                      31
+    retest_beklemeye_alindi  41
+    retest_giris             20
+    retest_kirildi           3
+    retest_yenilendi         49
+    retest_zaman_asimi       18
+TRADES CSV: /root/bot/smoke_retest_flag/A_base_c02.trades.csv (7 satir)
+JSON: /root/bot/smoke_retest_flag/A_base_c02.json
+    6 smoke_retest_flag/A_base_c00.trades.csv
+    4 smoke_retest_flag/A_base_c01.trades.csv
+    8 smoke_retest_flag/A_base_c02.trades.csv
+   15 smoke_reg/A_base_c00.trades.csv
+    6 smoke_reg/A_base_c01.trades.csv
+   28 smoke_reg/A_base_c02.trades.csv
+   67 total
+
