@@ -1,8 +1,9 @@
 {
- "status": "running",
+ "status": "done",
  "queued": "2026-09-04 11:07 TR",
  "box": "box2",
  "updated": "2026-09-04 11:07 TR",
  "started": "2026-09-04 11:07 TR",
- "type": "deploy"
+ "type": "deploy",
+ "finished": "2026-09-04 11:07 TR"
 }
