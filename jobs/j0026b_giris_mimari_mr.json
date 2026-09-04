@@ -1,0 +1,3 @@
+{"id": "j0026b_giris_mimari_mr", "box": "ovh", "type": "script", "script": "scripts/giris_mimari.py", "timeout": 7000,
+ "args": ["--trades", "srgeo3/B_bayrak_c*.trades.csv", "--paths", "mr",
+          "--xs", "0.3,0.5,1.0", "--atr-ks", "0.5,1.0", "--tfs", "5,15,60", "--ns", "120,240,480"]}

@@ -1,9 +1,0 @@
-{
- "id": "j0042_kume_retest1",
- "box": "ovh",
- "type": "script",
- "script": "scripts/kume_stats.py",
- "args": [
-  "retest1"
- ]
-}
