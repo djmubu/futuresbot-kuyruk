@@ -1,0 +1,9 @@
+{
+ "id": "j0033_analiz_htf_havuz",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "htf_oos"
+ ]
+}
