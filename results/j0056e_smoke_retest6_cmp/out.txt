@@ -1,0 +1,40 @@
+777d9b8ab873ec505613763d956413ff  smoke_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_reg/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_retest6_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_retest6_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_retest6_reg/A_base_c02.trades.csv
+SIG
+0b0c7746415d6080397293b7ae441181  smoke_retest3_flag/A_base_c00.trades.csv
+5fac8194b667a5ba1f2120569437c909  smoke_retest3_flag/A_base_c01.trades.csv
+87e503a0db9b858ff31324c1e0155747  smoke_retest3_flag/A_base_c02.trades.csv
+0b0c7746415d6080397293b7ae441181  smoke_retest6_sig/A_base_c00.trades.csv
+5fac8194b667a5ba1f2120569437c909  smoke_retest6_sig/A_base_c01.trades.csv
+87e503a0db9b858ff31324c1e0155747  smoke_retest6_sig/A_base_c02.trades.csv
+ANC
+      SR hard gate: no_retest_confirmed                                      26
+    retest_beklemeye_alindi  16
+    retest_cipa_yok          22
+    retest_giris             11
+    retest_kirildi           2
+    retest_yenilendi         28
+    retest_zaman_asimi       3
+      SR hard gate: no_retest_confirmed                                      15
+    retest_beklemeye_alindi  19
+    retest_cipa_yok          22
+    retest_giris             12
+    retest_kirildi           6
+    retest_yenilendi         28
+    retest_zaman_asimi       1
+      SR hard gate: no_retest_confirmed                                      31
+    retest_beklemeye_alindi  32
+    retest_cipa_yok          46
+    retest_giris             22
+    retest_kirildi           3
+    retest_yenilendi         60
+    retest_zaman_asimi       7
+   7 smoke_retest6_anc/A_base_c00.trades.csv
+   4 smoke_retest6_anc/A_base_c01.trades.csv
+   7 smoke_retest6_anc/A_base_c02.trades.csv
+  18 total
+
