@@ -1,8 +1,10 @@
 {
- "status": "running",
+ "status": "failed",
  "queued": "2026-09-04 20:13 TR",
  "box": "ovh",
  "updated": "2026-09-04 20:13 TR",
  "started": "2026-09-04 20:13 TR",
- "type": "run_ab"
+ "type": "run_ab",
+ "finished": "2026-09-04 20:13 TR",
+ "hata": "md5 uyusmadi, KOSMADI: {\"sim_e2e.py\": {\"beklenen\": \"3717aff511964b105c9b598590c66b24\", \"bulunan\": \"d791c74bcf89228785353d1ea6c13862\"}}"
 }
