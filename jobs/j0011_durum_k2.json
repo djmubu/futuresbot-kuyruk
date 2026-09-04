@@ -1,0 +1,1 @@
+{"id": "j0011_durum_k2", "box": "ovh", "type": "script", "script": "scripts/sh.py", "args": ["grep -c BITTI dss1.log; ls dss1/_ozet.json; uptime"]}
