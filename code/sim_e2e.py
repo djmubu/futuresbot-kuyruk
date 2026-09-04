@@ -143,6 +143,14 @@ ap.add_argument("--htf-align", action="store_true", dest="htf_align",
                      "Veri yetersizse (< N+slope gun) giris SERBEST (bayt-ayni davranis). Bayrak yokken bayt-ayni.")
 ap.add_argument("--htf-ema", type=int, default=20, dest="htf_ema", help="gunluk EMA uzunlugu (varsayilan 20)")
 ap.add_argument("--htf-slope", type=int, default=3, dest="htf_slope", help="EMA egim penceresi, gun (varsayilan 3)")
+# ── E120 / madde 19: RETEST GIRISI (impuls sonrasi geri cekilme + tutma teyidi) ──
+ap.add_argument("--entry-retest", action="store_true", dest="entry_retest",
+                help="madde 19: breakout/momentum sinyalinde HEMEN girme; bekleyen giris: fiyat sinyal fiyatindan >= --retest-pct geri cekilip "
+                     "(long: low <= P0*(1-X)) ardindan seviye ustunde yukari kapanis (close>open ve close>=seviye) yaparsa o barda gir. "
+                     "Geri cekilme yapisal stop'un (v2_sl) altina inerse iptal ('kirildi'); --retest-bars icinde olmazsa zaman asimi. mr yolu etkilenmez.")
+ap.add_argument("--retest-pct", type=float, default=0.5, dest="retest_pct", help="geri cekilme esigi %% (varsayilan 0.5 = kazananlarin MAE medyani)")
+ap.add_argument("--retest-bars", type=int, default=8, dest="retest_bars", help="bekleme suresi, tarama bari (15m) sayisi (varsayilan 8 = 2 saat)")
+ap.add_argument("--retest-paths", default="breakout,momentum", dest="retest_paths", help="retest uygulanacak yollar (varsayilan breakout,momentum)")
 ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
                 help="E118: --htf-align yalniz bu yollara uygulansin (orn. breakout,momentum; mr = mean reversion tanimi geregi karsi-trend). Bos = tum yollar.")
 ap.add_argument("--toy-sizer", action="store_true", dest="toy_sizer",
@@ -491,10 +499,63 @@ class _Probe:
         self._t0 = time.monotonic()
         self._hb = 5000          # her N scan'de bir ilerleme satiri
         self.last_sig = {}       # symbol -> son TradeSignal (source_path icin)
+        self.retest_pending = {} # E120: symbol -> bekleyen giris
+        self.retest_stats = {}
     def __getattr__(self, k):
         return getattr(self._inner, k)
+    def _rt_count(self, k):
+        self.retest_stats[k] = self.retest_stats.get(k, 0) + 1
     def scan_symbol(self, *a, **kw):
         sig = self._inner.scan_symbol(*a, **kw)
+        # ── E120: RETEST GIRISI (--entry-retest) ─────────────────────
+        if getattr(A, "entry_retest", False):
+            try:
+                _sym = a[0] if a else kw.get("symbol")
+                _pend = self.retest_pending.get(_sym)
+                _fresh = None
+                if sig is not None and getattr(sig, "is_actionable", False):
+                    _pth = (_infer_source_path(sig) or "").lower()
+                    if _pth in {x.strip().lower() for x in A.retest_paths.split(",") if x.strip()}:
+                        _fresh = sig
+                if _pend is not None:
+                    _pend["bars"] += 1
+                    _df15 = bar_store.get_closed_candles(_sym, adapter._cfg.scan_timeframe if 'adapter' in globals() else "15m")
+                    _bar = _df15.iloc[-1] if _df15 is not None and len(_df15) else None
+                    if _bar is not None:
+                        _lo, _hi, _op, _cl = float(_bar["low"]), float(_bar["high"]), float(_bar["open"]), float(_bar["close"])
+                        _long = _pend["long"]
+                        _v2 = _pend["v2_sl"]
+                        _broke = (_v2 > 0) and ((_lo <= _v2) if _long else (_hi >= _v2))
+                        if _broke:
+                            del self.retest_pending[_sym]; self._rt_count("retest_kirildi"); _pend = None
+                        else:
+                            if (_lo <= _pend["lvl"]) if _long else (_hi >= _pend["lvl"]):
+                                _pend["touched"] = True
+                            _teyit = _pend["touched"] and ((_cl > _op and _cl >= _pend["lvl"]) if _long else (_cl < _op and _cl <= _pend["lvl"]))
+                            if _teyit:
+                                _s = _pend["sig"]
+                                from decimal import Decimal as _Dz
+                                _s.entry_zone = (_Dz(str(_cl)), _Dz(str(_cl)))
+                                del self.retest_pending[_sym]; self._rt_count("retest_giris")
+                                sig = _s; _fresh = None; _pend = None
+                            elif _pend["bars"] > int(A.retest_bars):
+                                del self.retest_pending[_sym]; self._rt_count("retest_zaman_asimi"); _pend = None
+                if _fresh is not None:
+                    # yeni aksiyon sinyali: bekleyen giris olarak kaydet (varsa yenile), simdi girme
+                    _p0 = float(_fresh.entry_price)
+                    _long = str(getattr(_fresh.direction, "value", _fresh.direction)).lower().startswith("l")
+                    _X = float(A.retest_pct) / 100.0
+                    _srd = (getattr(_fresh, "indicators_snapshot", None) or {}).get("sr_decision") or {}
+                    try: _v2 = float(_srd.get("v2_sl") or 0)
+                    except Exception: _v2 = 0.0
+                    self.retest_pending[_sym] = {"sig": _fresh, "p0": _p0, "lvl": _p0 * (1 - _X) if _long else _p0 * (1 + _X),
+                                                 "long": _long, "v2_sl": _v2, "bars": 0, "touched": False}
+                    self._rt_count("retest_beklemeye_alindi" if _pend is None else "retest_yenilendi")
+                    sig = None
+                elif _pend is not None:
+                    sig = None   # beklerken engine'in yeni-olmayan sinyali gecmesin
+            except Exception as _rte:
+                self._rt_count("retest_exc")
         self.n += 1
         if self.n % self._hb == 0:
             el = time.monotonic() - self._t0
@@ -1121,6 +1182,10 @@ print("    is_valid=False       %s" % _sz["invalid"])
 print("    qty<=0               %s" % _sz["zero"])
 print("    KABUL                %s" % _sz["ok"])
 print("    SL tavana carpti     %s" % _sz["sl_capped"])
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red"):
+    pass
+for _ek, _ev in sorted(getattr(probe, "retest_stats", {}).items()):
+    print("    %-24s %s" % (_ek, _ev))
 for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red"):
     if _sz.get(_ek):
         print("    %-20s %s" % (_ek, _sz[_ek]))
