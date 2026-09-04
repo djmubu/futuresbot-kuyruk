@@ -1,0 +1,28 @@
+777d9b8ab873ec505613763d956413ff  smoke_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_reg/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_retest3_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_retest3_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_retest3_reg/A_base_c02.trades.csv
+      SR hard gate: no_retest_confirmed                                      26
+    retest_beklemeye_alindi  24
+    retest_giris             20
+    retest_kirildi           1
+    retest_yenilendi         15
+    retest_zaman_asimi       3
+    retest_beklemeye_alindi  26
+    retest_giris             22
+    retest_kirildi           2
+    retest_yenilendi         18
+    retest_zaman_asimi       2
+      SR hard gate: no_retest_confirmed                                      31
+    retest_beklemeye_alindi  52
+    retest_giris             43
+    retest_kirildi           5
+    retest_yenilendi         34
+    retest_zaman_asimi       4
+  11 smoke_retest3_flag/A_base_c00.trades.csv
+   4 smoke_retest3_flag/A_base_c01.trades.csv
+  10 smoke_retest3_flag/A_base_c02.trades.csv
+  25 total
+
