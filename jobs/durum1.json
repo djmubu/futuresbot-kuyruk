@@ -1,0 +1,2 @@
+{"id": "durum1", "box": "ovh", "type": "script", "script": "scripts/sh.py",
+ "args": ["grep -c BITTI dss1.log; ls dss1/_ozet.json; grep -c BITTI srmr_oos.log 2>/dev/null; uptime"]}

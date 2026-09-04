@@ -1,0 +1,1 @@
+{"id": "analiz_srmr_oos", "box": "box2", "type": "script", "script": "scripts/analiz.py", "args": ["srmr_oos"]}
