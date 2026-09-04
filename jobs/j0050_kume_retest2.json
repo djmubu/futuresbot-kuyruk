@@ -1,0 +1,9 @@
+{
+ "id": "j0050_kume_retest2",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "retest2"
+ ]
+}

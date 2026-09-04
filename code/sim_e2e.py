@@ -151,8 +151,11 @@ ap.add_argument("--entry-retest", action="store_true", dest="entry_retest",
 ap.add_argument("--retest-pct", type=float, default=0.5, dest="retest_pct", help="geri cekilme esigi %% (varsayilan 0.5 = kazananlarin MAE medyani)")
 ap.add_argument("--retest-bars", type=int, default=8, dest="retest_bars", help="bekleme suresi, tarama bari (15m) sayisi (varsayilan 8 = 2 saat)")
 ap.add_argument("--retest-paths", default="breakout,momentum", dest="retest_paths", help="retest uygulanacak yollar (varsayilan breakout,momentum)")
-ap.add_argument("--retest-tf", type=int, default=15, dest="retest_tf", choices=[15, 60],
-                help="teyit bari: 15 = tarama bari (15m); 60 = 1h bari (yalniz saat kapanisina denk gelen 15m taramasinda degerlendirilir; touched 15m low'larindan)")
+ap.add_argument("--retest-tf", type=int, default=15, dest="retest_tf", choices=[5, 15, 60],
+                help="teyit bari: 5 = 1m'den toplanan 5m alt-barlar (15m taramasinda 3 alt-bar sirayla; giris tarama kapanisinda), "
+                     "15 = tarama bari; 60 = 1h bari (saat kapanisina denk gelen taramada)")
+ap.add_argument("--retest-atr", type=float, default=0.0, dest="retest_atr",
+                help="geri cekilme esigi = k x ATR(14, 15m) / fiyat (yuzde yerine). >0 ise --retest-pct yok sayilir. E124 secimi: 0.5")
 ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
                 help="E118: --htf-align yalniz bu yollara uygulansin (orn. breakout,momentum; mr = mean reversion tanimi geregi karsi-trend). Bos = tum yollar.")
 ap.add_argument("--toy-sizer", action="store_true", dest="toy_sizer",
@@ -532,31 +535,54 @@ class _Probe:
                         if _b1h is None or int(_b1h["close_time"]) != int(_bar["close_time"]):
                             _conf_ok = False
                     if _bar is not None:
-                        _lo, _hi, _op, _cl = float(_bar["low"]), float(_bar["high"]), float(_bar["open"]), float(_bar["close"])
-                        if _tf == 60 and _conf_ok:
-                            _op, _cl = float(_b1h["open"]), float(_b1h["close"])
-                        _long = _pend["long"]
-                        _v2 = _pend["v2_sl"]
-                        _broke = (_v2 > 0) and ((_lo <= _v2) if _long else (_hi >= _v2))
-                        if _broke:
-                            del self.retest_pending[_sym]; self._rt_count("retest_kirildi"); _pend = None
+                        _long = _pend["long"]; _v2 = _pend["v2_sl"]
+                        # degerlendirilecek alt-barlar: 5m -> 1m'den 3 alt-bar; 15m -> tek bar; 60m -> 1h bari (o,c) + 15m (h,l)
+                        _subs = []
+                        if _tf == 5:
+                            _df1 = bar_store.get_closed_candles(_sym, "1m")
+                            if _df1 is not None and len(_df1) >= 15:
+                                _o1 = _df1["open"].to_numpy(float)[-15:]; _h1 = _df1["high"].to_numpy(float)[-15:]
+                                _l1 = _df1["low"].to_numpy(float)[-15:]; _c1 = _df1["close"].to_numpy(float)[-15:]
+                                for k in range(3):
+                                    _subs.append((_o1[k * 5], _h1[k * 5:k * 5 + 5].max(), _l1[k * 5:k * 5 + 5].min(), _c1[k * 5 + 4]))
+                            else:
+                                _subs.append((float(_bar["open"]), float(_bar["high"]), float(_bar["low"]), float(_bar["close"])))
+                        elif _tf == 60 and _conf_ok:
+                            _subs.append((float(_b1h["open"]), float(_bar["high"]), float(_bar["low"]), float(_b1h["close"])))
                         else:
+                            _subs.append((float(_bar["open"]), float(_bar["high"]), float(_bar["low"]), float(_bar["close"])))
+                        _sonuc = None
+                        for (_op, _hi, _lo, _cl) in _subs:
+                            if (_v2 > 0) and ((_lo <= _v2) if _long else (_hi >= _v2)):
+                                _sonuc = "kirildi"; break
                             if (_lo <= _pend["lvl"]) if _long else (_hi >= _pend["lvl"]):
                                 _pend["touched"] = True
-                            _teyit = _conf_ok and _pend["touched"] and ((_cl > _op and _cl >= _pend["lvl"]) if _long else (_cl < _op and _cl <= _pend["lvl"]))
-                            if _teyit:
-                                _s = _pend["sig"]
-                                from decimal import Decimal as _Dz
-                                _s.entry_zone = (_Dz(str(_cl)), _Dz(str(_cl)))
-                                del self.retest_pending[_sym]; self._rt_count("retest_giris")
-                                sig = _s; _fresh = None; _pend = None
-                            elif _pend["bars"] > int(A.retest_bars):
-                                del self.retest_pending[_sym]; self._rt_count("retest_zaman_asimi"); _pend = None
+                            if _conf_ok and _pend["touched"] and ((_cl > _op and _cl >= _pend["lvl"]) if _long else (_cl < _op and _cl <= _pend["lvl"])):
+                                _sonuc = ("giris", _cl); break
+                        if _sonuc == "kirildi":
+                            del self.retest_pending[_sym]; self._rt_count("retest_kirildi"); _pend = None
+                        elif isinstance(_sonuc, tuple):
+                            _s = _pend["sig"]
+                            from decimal import Decimal as _Dz
+                            _s.entry_zone = (_Dz(str(_sonuc[1])), _Dz(str(_sonuc[1])))
+                            del self.retest_pending[_sym]; self._rt_count("retest_giris")
+                            sig = _s; _fresh = None; _pend = None
+                        elif _pend["bars"] > int(A.retest_bars):
+                            del self.retest_pending[_sym]; self._rt_count("retest_zaman_asimi"); _pend = None
                 if _fresh is not None:
                     # yeni aksiyon sinyali: bekleyen giris olarak kaydet (varsa yenile), simdi girme
                     _p0 = float(_fresh.entry_price)
                     _long = str(getattr(_fresh.direction, "value", _fresh.direction)).lower().startswith("l")
                     _X = float(A.retest_pct) / 100.0
+                    if float(getattr(A, "retest_atr", 0) or 0) > 0:
+                        try:
+                            _dfa = bar_store.get_closed_candles(_sym, "15m")
+                            _h = _dfa["high"].to_numpy(float)[-15:]; _l = _dfa["low"].to_numpy(float)[-15:]; _c = _dfa["close"].to_numpy(float)[-15:]
+                            _trs = [max(_h[i] - _l[i], abs(_h[i] - _c[i - 1]), abs(_l[i] - _c[i - 1])) for i in range(1, len(_h))]
+                            _atrp = (sum(_trs) / len(_trs)) / _p0 if _trs and _p0 > 0 else 0.0
+                            if _atrp > 0: _X = float(A.retest_atr) * _atrp
+                        except Exception:
+                            pass
                     _srd = (getattr(_fresh, "indicators_snapshot", None) or {}).get("sr_decision") or {}
                     try: _v2 = float(_srd.get("v2_sl") or 0)
                     except Exception: _v2 = 0.0

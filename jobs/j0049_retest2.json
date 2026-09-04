@@ -1,0 +1,28 @@
+{
+ "id": "j0049_retest2",
+ "box": "ovh",
+ "type": "run_ab",
+ "out": "retest2",
+ "args": [
+  "--offset",
+  "0",
+  "--limit",
+  "310",
+  "--chunk",
+  "4",
+  "--jobs",
+  "90",
+  "--days",
+  "180",
+  "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
+  "--b-flags=--entry-retest --retest-tf 5 --retest-atr 0.5 --retest-bars 16",
+  "--ab-set="
+ ],
+ "expect_md5": {
+  "sim_e2e.py": "844b08598314556704aaa0222f0a52e5",
+  "run_ab.py": "f477d4fa17f9713f62413cb60ba3b5c7"
+ },
+ "analiz": [
+  "retest2"
+ ]
+}
