@@ -1,0 +1,11 @@
+{
+ "id": "j0055b_eklenen_retest123",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/eklenen_analiz.py",
+ "args": [
+  "retest1",
+  "retest2",
+  "retest3"
+ ]
+}
