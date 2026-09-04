@@ -1,0 +1,16 @@
+sinyal=0 sembol=0 yollar=['breakout', 'momentum']
+atlanan=0
+
+==== DONEM: train ====
+TABAN (t0'da gir, ayni cikis kurali): n=0 toplamR=+0.0 ortR=+0.0000 WR=0.0%
+konfig                     giris%   kir%   zam%  n_gir  R_retest   R_taban ortR_gir     WR  fiyat+%
+
+==== DONEM: test ====
+TABAN (t0'da gir, ayni cikis kurali): n=0 toplamR=+0.0 ortR=+0.0000 WR=0.0%
+konfig                     giris%   kir%   zam%  n_gir  R_retest   R_taban ortR_gir     WR  fiyat+%
+
+==== DONEM: all ====
+TABAN (t0'da gir, ayni cikis kurali): n=0 toplamR=+0.0 ortR=+0.0000 WR=0.0%
+konfig                     giris%   kir%   zam%  n_gir  R_retest   R_taban ortR_gir     WR  fiyat+%
+
+NOT: R brut, tek TP 1.5R, muhafazakar bar-ici; girilmeyen sinyal = 0 R. 'fark' = R_retest - R_taban (ayni sinyaller). Kararda toplam R (fark) VE girilen-basina ortR birlikte okunur; train/test tutarliligi sart.
