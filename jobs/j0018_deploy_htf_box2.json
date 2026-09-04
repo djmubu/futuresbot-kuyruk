@@ -1,0 +1,11 @@
+{
+ "id": "j0018_deploy_htf_box2",
+ "box": "box2",
+ "type": "deploy",
+ "files": {
+  "code/sim_e2e.py": "sim_e2e.py"
+ },
+ "expect_md5": {
+  "sim_e2e.py": "d791c74bcf89228785353d1ea6c13862"
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "id": "j0016_analiz_crowd_havuz",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/analiz.py",
+ "args": [
+  "crowd1",
+  "crowd_oos"
+ ]
+}

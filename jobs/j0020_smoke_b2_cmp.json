@@ -1,0 +1,9 @@
+{
+ "id": "j0020_smoke_b2_cmp",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "md5sum smoke_b2_old/A_base_c0*.trades.csv smoke_b2_new/A_base_c0*.trades.csv"
+ ]
+}
