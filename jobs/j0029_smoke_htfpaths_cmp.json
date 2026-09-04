@@ -1,0 +1,9 @@
+{
+ "id": "j0029_smoke_htfpaths_cmp",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "md5sum smoke_reg/A_base_c0*.trades.csv smoke_htfpaths_reg/A_base_c0*.trades.csv"
+ ]
+}

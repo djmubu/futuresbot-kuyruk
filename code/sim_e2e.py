@@ -143,6 +143,8 @@ ap.add_argument("--htf-align", action="store_true", dest="htf_align",
                      "Veri yetersizse (< N+slope gun) giris SERBEST (bayt-ayni davranis). Bayrak yokken bayt-ayni.")
 ap.add_argument("--htf-ema", type=int, default=20, dest="htf_ema", help="gunluk EMA uzunlugu (varsayilan 20)")
 ap.add_argument("--htf-slope", type=int, default=3, dest="htf_slope", help="EMA egim penceresi, gun (varsayilan 3)")
+ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
+                help="E118: --htf-align yalniz bu yollara uygulansin (orn. breakout,momentum; mr = mean reversion tanimi geregi karsi-trend). Bos = tum yollar.")
 ap.add_argument("--toy-sizer", action="store_true", dest="toy_sizer",
                 help="eski default_sizer'i kullan (1R=ozkaynagin %%1'i). Varsayilan: GERCEK PositionSizer")
 ap.add_argument("--verbose", action="store_true", help="motor loglarini ac (COK yavas)")
@@ -863,7 +865,16 @@ if not A.toy_sizer:
                     _sz["down_rejim_red"] = _sz.get("down_rejim_red", 0) + 1
                     return None
         # ── E109 / madde 20: UST-TF YON FILTRESI (--htf-align) ──────
-        if getattr(A, "htf_align", False):
+        _htf_ok_path = True
+        if getattr(A, "htf_align", False) and (getattr(A, "htf_paths", "") or "").strip():
+            try:
+                _hp = {x.strip().lower() for x in A.htf_paths.split(",") if x.strip()}
+                _htf_ok_path = (_infer_source_path(raw) or "").lower() in _hp
+            except Exception:
+                _htf_ok_path = True
+            if not _htf_ok_path:
+                _sz["htf_yol_disi"] = _sz.get("htf_yol_disi", 0) + 1
+        if getattr(A, "htf_align", False) and _htf_ok_path:
             try:
                 _df4 = bar_store.get_closed_candles(sig.symbol, "4h")
                 _isl_h = str(getattr(raw.direction, "value", raw.direction)).lower().startswith("l")
@@ -1110,7 +1121,7 @@ print("    is_valid=False       %s" % _sz["invalid"])
 print("    qty<=0               %s" % _sz["zero"])
 print("    KABUL                %s" % _sz["ok"])
 print("    SL tavana carpti     %s" % _sz["sl_capped"])
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "mr_cipa_yakin_red", "baglam_only_red"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red"):
     if _sz.get(_ek):
         print("    %-20s %s" % (_ek, _sz[_ek]))
 if _sz_reasons:
