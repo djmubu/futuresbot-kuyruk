@@ -1,0 +1,9 @@
+{
+ "id": "j0059a_kotu_retest6",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kotu_islemler.py",
+ "args": [
+  "retest6"
+ ]
+}
