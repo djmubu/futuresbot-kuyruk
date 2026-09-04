@@ -1,0 +1,7 @@
+{
+ "dir": "htf3",
+ "cikarilan": {},
+ "eklenen": {},
+ "A": {},
+ "B": {}
+}
