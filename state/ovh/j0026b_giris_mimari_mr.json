@@ -1,8 +1,9 @@
 {
- "status": "running",
+ "status": "done",
  "queued": "2026-09-04 21:28 TR",
  "box": "ovh",
  "updated": "2026-09-04 21:28 TR",
  "started": "2026-09-04 21:28 TR",
- "type": "script"
+ "type": "script",
+ "finished": "2026-09-04 21:28 TR"
 }
