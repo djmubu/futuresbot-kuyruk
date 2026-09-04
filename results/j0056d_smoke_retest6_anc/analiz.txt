@@ -1,0 +1,8 @@
+  [A_base] BTC dedupe: 2 BTC satiri -> 2 (parca-kopyasi ayiklandi)
+=== A/B ANALIZ  dirs=smoke_retest6_anc  A=A_base  B=B_bayrak ===
+
+[1] KOL TOPLAMLARI
+  A              n=    15 toplamR=     +7.8 mR=+0.5221 WR= 66.7% maxDD=    -2.1
+  B              VERI YOK
+
+[stderr]
