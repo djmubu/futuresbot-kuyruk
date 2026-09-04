@@ -1,0 +1,21 @@
+{
+ "id": "j0043b_giris_mimari_box2_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/giris_mimari.py",
+ "timeout": 10000,
+ "args": [
+  "--trades",
+  "srmr_oos/B_bayrak_c*.trades.csv",
+  "--paths",
+  "breakout,momentum",
+  "--xs",
+  "0.3,0.5,0.75,1.0,1.5",
+  "--atr-ks",
+  "0.5,1.0,1.5",
+  "--tfs",
+  "5,15,60",
+  "--ns",
+  "60,120,240,480"
+ ]
+}
