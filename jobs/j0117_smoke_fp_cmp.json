@@ -1,0 +1,7 @@
+{
+ "id": "j0117_smoke_fp_cmp",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": ["md5sum smoke_reg/A_base_c0*.trades.csv smoke_fp_reg/A_base_c0*.trades.csv; head -3 smoke_fp_reg/A_base_c00.feat.csv; python3 -c \"import csv,glob;r=[x for f in glob.glob('smoke_fp_reg/A_base_c0*.feat.csv') for x in csv.DictReader(open(f))];print('n',len(r));[print(k,sum(1 for x in r if x[k]=='1'),'/',sum(1 for x in r if x[k]!='')) for k in ('fp075','fp100','fp125')]\""]
+}

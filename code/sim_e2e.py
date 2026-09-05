@@ -754,6 +754,7 @@ _sr_by_pos = {}     # position_id -> ayni
 _anchor_by_order = {}   # order_id -> (capa_fiyati, is_long)
 _anchor_by_pos = {}     # position_id -> ayni
 _ext_by_pos = {}        # position_id -> [islem boyunca min_low, max_high] (1m)
+_fp_by_pos = {}         # M35/E158: ilk-gecis etiketi — position_id -> {risk, isl, dn: ts(-1R ilk temas), up: {X: ts(+X R ilk temas)}}
 _SIM_SAAT = {"ns": 0}   # son 1m bar kapanisi (izleme listesi gun secimi icin)
 _PF_REF = {"pf": None}   # sizer blogu kurulduktan sonra doldurulur
 _meta_by_pos = {}        # position_id -> (rejim, yol)
@@ -868,6 +869,30 @@ def _obc_tracked(event):
             else:
                 if event.low_px < _e[0]: _e[0] = event.low_px
                 if event.high_px > _e[1]: _e[1] = event.high_px
+    except Exception:
+        pass
+    # M35 (E158): ilk-gecis etiketi — 1m yolda +X R (0.75/1.0/1.25) ILK temas ts vs -1R (orijinal stop) ILK temas ts.
+    # Ayni 1m mumda ikisi de gorulurse etiket 0 (kotumser: up < dn kesin sart). Davranis DEGISMEZ, yalniz kayit.
+    try:
+        if str(getattr(event, "timeframe", "1m")) == "1m":
+            for _p in exchange.open_positions(event.symbol):
+                _st = _fp_by_pos.get(_p.position_id)
+                if _st is None:
+                    _sl0 = getattr(_p, "orig_sl_px", None) or getattr(_p, "sl_px", None)
+                    _risk = abs(float(_p.entry_px) - float(_sl0)) if _sl0 else 0.0
+                    if _risk <= 0:
+                        continue
+                    _st = {"risk": _risk, "isl": str(getattr(_p.direction, "value", _p.direction)).lower() in ("long", "buy"), "dn": None, "up": {}}
+                    _fp_by_pos[_p.position_id] = _st
+                _epx = float(_p.entry_px); _tsn = int(event.close_ts_ns)
+                _hi = float(event.high_px); _lo = float(event.low_px)
+                if _st["dn"] is None and ((_lo <= _epx - _st["risk"]) if _st["isl"] else (_hi >= _epx + _st["risk"])):
+                    _st["dn"] = _tsn
+                for _xr in (0.75, 1.0, 1.25):
+                    if _xr in _st["up"]:
+                        continue
+                    if (_hi >= _epx + _xr * _st["risk"]) if _st["isl"] else (_lo <= _epx - _xr * _st["risk"]):
+                        _st["up"][_xr] = _tsn
     except Exception:
         pass
     _f = _orig_obc(event)
@@ -1636,13 +1661,24 @@ if A.json_out:
             if _feat_by_pos:
                 _fk = ["rsi", "adx", "macd_hist", "volume_ratio", "supertrend_dir", "ema_fast_pct", "ema_medium_pct",
                        "a_plus_count", "level_count", "retest_confirmed", "retest_reason", "nearest_support_pct",
-                       "nearest_resistance_pct", "v2_rr", "v3_conf_delta", "confidence", "breakout_score", "mr_score", "active_strategy"]
+                       "nearest_resistance_pct", "v2_rr", "v3_conf_delta", "confidence", "breakout_score", "mr_score", "active_strategy",
+                       "fp075", "fp100", "fp125", "fp_up100_dk", "fp_dn_dk"]  # M35: ilk-gecis etiketleri (1 = +X R'ye -1R'den ONCE ulasti)
                 _fcp = Path(A.json_out).with_suffix(".feat.csv")
                 with open(_fcp, "w", newline="", encoding="utf-8") as _ff:
                     _fw = _csv.writer(_ff); _fw.writerow(["position_id"] + _fk)
                     for _v, _x in _tr:
                         _fd = _feat_by_pos.get(_x.position_id)
-                        if _fd: _fw.writerow([_x.position_id] + [_fd.get(k, "") for k in _fk])
+                        if _fd:
+                            _fs = _fp_by_pos.get(_x.position_id)
+                            if _fs:
+                                _dn = _fs.get("dn"); _ups = _fs.get("up", {})
+                                _fd = dict(_fd)
+                                for _xr, _kn in ((0.75, "fp075"), (1.0, "fp100"), (1.25, "fp125")):
+                                    _u = _ups.get(_xr)
+                                    _fd[_kn] = "1" if (_u is not None and (_dn is None or _u < _dn)) else "0"
+                                _fd["fp_up100_dk"] = ("%.0f" % ((_ups[1.0] - _x.opened_ts_ns) / 6e10)) if 1.0 in _ups else ""
+                                _fd["fp_dn_dk"] = ("%.0f" % ((_dn - _x.opened_ts_ns) / 6e10)) if _dn else ""
+                            _fw.writerow([_x.position_id] + [_fd.get(k, "") for k in _fk])
                 print("FEAT CSV: %s" % _fcp)
         except Exception as _ce:
             print("!! trades csv yazilamadi: %r" % _ce)
