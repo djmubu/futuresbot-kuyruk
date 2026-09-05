@@ -144,6 +144,14 @@ ap.add_argument("--htf-align", action="store_true", dest="htf_align",
 ap.add_argument("--htf-ema", type=int, default=20, dest="htf_ema", help="gunluk EMA uzunlugu (varsayilan 20)")
 ap.add_argument("--htf-slope", type=int, default=3, dest="htf_slope", help="EMA egim penceresi, gun (varsayilan 3)")
 # ── E120 / madde 19: RETEST GIRISI (impuls sonrasi geri cekilme + tutma teyidi) ──
+ap.add_argument("--entry-limit", action="store_true", dest="entry_limit",
+                help="M39 (E158/GPT P1-5): MARKET yerine TEK, kisa omurlu LIMIT giris. Limit = sinyal fiyati * (1 -/+ offset); "
+                     "dolum KOTUMSER: sonraki 1m barlarda fiyat limitin ICINDEN gecmeli (long: low < limit); --limit-ttl-min icinde dolmazsa iptal. "
+                     "Dolum fiyati = limit, kayma 0, komisyon maker (live_fee_entry). Ayni barda SL'e de degerse borsa mantigi ayni barda stop'lar (kotumser). "
+                     "Kademeli giris YOK: sembol basina tek bekleyen; yeni sinyal eskisini degistirir.")
+ap.add_argument("--limit-offset-bps", type=float, default=0.0, dest="limit_offset_bps", help="limit uzakligi bps (0 = sinyal fiyati; 5 = long icin %0.05 asagi)")
+ap.add_argument("--limit-ttl-min", type=int, default=15, dest="limit_ttl_min", help="bekleyen limitin omru (dk), varsayilan 15")
+ap.add_argument("--limit-fill", default="through", choices=["through", "touch"], dest="limit_fill", help="dolum kurali: through = fiyat limitin icinden gecmeli (kotumser), touch = deginme yeter")
 ap.add_argument("--entry-retest", action="store_true", dest="entry_retest",
                 help="madde 19: breakout/momentum sinyalinde HEMEN girme; bekleyen giris: fiyat sinyal fiyatindan >= --retest-pct geri cekilip "
                      "(long: low <= P0*(1-X)) ardindan seviye ustunde yukari kapanis (close>open ve close>=seviye) yaparsa o barda gir. "
@@ -762,7 +770,34 @@ _PF_REF = {"pf": None}   # sizer blogu kurulduktan sonra doldurulur
 _meta_by_pos = {}        # position_id -> (rejim, yol)
 _feat_by_order = {}      # E141: order_id -> giris-ani ozellik sozlugu
 _feat_by_pos = {}
-_orig_submit = exchange.submit_market_entry
+_orig_submit_raw = exchange.submit_market_entry
+_limit_pending = {}     # M39: symbol -> {order, lim, isl, exp, ref}
+_last_1m_close = {}     # symbol -> son 1m kapanis (limit referansi yedegi)
+def _limit_submit(**kw):
+    """M39: bayrak acikken market emri GONDERME; bekleyen limit olarak tut. Dolum _obc_tracked'da (1m)."""
+    if not getattr(A, "entry_limit", False):
+        return _orig_submit_raw(**kw)
+    sym = kw.get("symbol"); _sgl = probe.last_sig.get(sym)
+    ref = 0.0
+    try: ref = float(getattr(_sgl, "entry_price", 0) or 0) if _sgl is not None else 0.0
+    except Exception: ref = 0.0
+    if ref <= 0: ref = float(_last_1m_close.get(sym) or 0)
+    if ref <= 0:
+        _sz["limit_ref_yok"] = _sz.get("limit_ref_yok", 0) + 1
+        return _orig_submit_raw(**kw)
+    from futuresbot.sim.exchange import SimOrder as _SO
+    exchange._order_counter += 1
+    oid = "o-%05d" % exchange._order_counter
+    d = kw["direction"]; isl = str(getattr(d, "value", d)).lower() in ("long", "buy")
+    off = float(getattr(A, "limit_offset_bps", 0.0) or 0.0) / 10000.0
+    lim = ref * (1.0 - off) if isl else ref * (1.0 + off)
+    order = _SO(order_id=oid, symbol=sym, direction=d, qty=kw["qty"], submitted_ts_ns=int(kw["ts_ns"]), sl_px=kw.get("sl_px"), tp_px=kw.get("tp_px"))
+    if sym in _limit_pending:
+        _sz["limit_replaced"] = _sz.get("limit_replaced", 0) + 1
+    _limit_pending[sym] = {"order": order, "lim": lim, "isl": isl, "exp": int(kw["ts_ns"]) + int(getattr(A, "limit_ttl_min", 15)) * 60_000_000_000, "ref": ref}
+    _sz["limit_pending"] = _sz.get("limit_pending", 0) + 1
+    return oid
+_orig_submit = _limit_submit
 def _submit_tagged(**kw):
     oid = _orig_submit(**kw)
     # source_path motorun TradeSignal'inde YOK; adapter onu TradeSignalLike'a
@@ -873,6 +908,38 @@ def _obc_tracked(event):
                 if event.high_px > _e[1]: _e[1] = event.high_px
     except Exception:
         pass
+    # M39: bekleyen LIMIT girislerin dolumu / zaman asimi (1m, orijinalden ONCE: ayni barin SL/TP kontrolu dolumdan sonra calisir)
+    try:
+        if str(getattr(event, "timeframe", "1m")) == "1m":
+            _last_1m_close[event.symbol] = float(event.close_px)
+            _pd = _limit_pending.get(event.symbol)
+            if _pd is not None:
+                if int(event.close_ts_ns) > _pd["exp"]:
+                    del _limit_pending[event.symbol]
+                    _sz["limit_timeout"] = _sz.get("limit_timeout", 0) + 1
+                elif int(event.open_ts_ns) >= int(_pd["order"].submitted_ts_ns):
+                    _lim = _pd["lim"]; _mode = getattr(A, "limit_fill", "through")
+                    if _pd["isl"]:
+                        _hit = (float(event.low_px) < _lim) if _mode == "through" else (float(event.low_px) <= _lim)
+                    else:
+                        _hit = (float(event.high_px) > _lim) if _mode == "through" else (float(event.high_px) >= _lim)
+                    if _hit:
+                        del _limit_pending[event.symbol]
+                        _cfg = exchange._cfg; _old_cm = _cfg.cost_model; _old_slip = getattr(_cfg, "live_slip_entry_bps", None)
+                        try:
+                            _cfg.cost_model = "live"          # giris komisyonu maker (live_fee_entry)
+                            _cfg.live_slip_entry_bps = 0.0    # limit dolumu: kayma yok
+                            import types as _types
+                            _fev = _types.SimpleNamespace(symbol=event.symbol, timeframe="1m", open_ts_ns=event.open_ts_ns, close_ts_ns=event.close_ts_ns,
+                                                          event_ts_ns=event.close_ts_ns, open_px=_lim, high_px=event.high_px, low_px=event.low_px,
+                                                          close_px=event.close_px, volume=getattr(event, "volume", 0.0))
+                            exchange._fill_entry(_pd["order"], _fev)
+                        finally:
+                            _cfg.cost_model = _old_cm
+                            if _old_slip is not None: _cfg.live_slip_entry_bps = _old_slip
+                        _sz["limit_filled"] = _sz.get("limit_filled", 0) + 1
+    except Exception:
+        _sz["limit_exc"] = _sz.get("limit_exc", 0) + 1
     # M35 (E158): ilk-gecis etiketi — 1m yolda +X R (0.75/1.0/1.25) ILK temas ts vs -1R (orijinal stop) ILK temas ts.
     # Ayni 1m mumda ikisi de gorulurse etiket 0 (kotumser: up < dn kesin sart). Davranis DEGISMEZ, yalniz kayit.
     try:
