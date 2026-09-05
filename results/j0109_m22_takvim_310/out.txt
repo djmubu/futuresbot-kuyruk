@@ -1,0 +1,40 @@
+DIR=beh1 islem=3686 kapanis kolonu=closed_utc toplamR=-202.8
+
+[1] GIRIS ANINDA AYNI YONDE ACIK ISLEM SAYISI -> R (tavansiz havuz)
+  -- all
+     ayni-yon acik   0-2      n=  186 ortR=-0.0767 z=-0.86 toplam=-14.3 WR=41.4%
+     ayni-yon acik   3-5      n=  316 ortR=-0.0257 z=-0.38 toplam=-8.1 WR=43.0%
+     ayni-yon acik   6-10     n=  618 ortR=-0.0295 z=-0.61 toplam=-18.2 WR=42.9%
+     ayni-yon acik  11-20     n= 1311 ortR=-0.0181 z=-0.55 toplam=-23.8 WR=43.5%
+     ayni-yon acik  21-40     n= 1075 ortR=-0.0674 z=-1.85 toplam=-72.4 WR=41.1%
+     ayni-yon acik  41-+      n=  180 ortR=-0.3665 z=-4.51 toplam=-66.0 WR=28.9%
+  -- train
+     ayni-yon acik   0-2      n=   96 ortR=+0.0073 z=+0.06 toplam=+0.7 WR=43.8%
+     ayni-yon acik   3-5      n=  143 ortR=+0.0955 z=+0.94 toplam=+13.7 WR=47.6%
+     ayni-yon acik   6-10     n=  235 ortR=-0.0063 z=-0.08 toplam=-1.5 WR=43.4%
+     ayni-yon acik  11-20     n=  844 ortR=-0.0156 z=-0.38 toplam=-13.2 WR=43.6%
+     ayni-yon acik  21-40     n=  900 ortR=-0.0727 z=-1.83 toplam=-65.4 WR=40.9%
+     ayni-yon acik  41-+      n=  179 ortR=-0.3627 z=-4.45 toplam=-64.9 WR=29.1%
+  -- test
+     ayni-yon acik   0-2      n=   90 ortR=-0.1662 z=-1.29 toplam=-15.0 WR=38.9%
+     ayni-yon acik   3-5      n=  173 ortR=-0.1259 z=-1.41 toplam=-21.8 WR=39.3%
+     ayni-yon acik   6-10     n=  383 ortR=-0.0437 z=-0.72 toplam=-16.8 WR=42.6%
+     ayni-yon acik  11-20     n=  467 ortR=-0.0227 z=-0.41 toplam=-10.6 WR=43.3%
+     ayni-yon acik  21-40     n=  175 ortR=-0.0399 z=-0.45 toplam=-7.0 WR=42.3%
+     ayni-yon acik  41-+      n=    1 ortR=+0.0000 z=+0.00 toplam=-1.0 WR=0.0%
+  long eszamanlilik medyan 17 p90 34 max 104
+  short eszamanlilik medyan 4 p90 12 max 33
+
+[2] TAVAN POLITIKASI: ayni yonde acik >= K ise girme (sirali; atlanan slot tutmaz)
+  A (tavansiz): n=3686 toplamR=-202.8 maxDD=-258.1 | aylik 26-04:-23 26-05:-112 26-06:+5 26-07:-95 26-08:+23
+  K= 3 (canli ~ 1): B n=  789 toplamR=-43.3 (fark +159.5) maxDD=-56.3 | CIKARILAN n= 2897 (79%) ort=-0.0551 z=-2.49 [train n=1926 ort -0.068 z -2.51 | test n=971 ort -0.029 z -0.77] | aylik B>A 4/5 | wf train +130.9 test +28.6 [7:OK]
+  K= 5 (canli ~ 2): B n= 1195 toplamR=-34.6 (fark +168.2) maxDD=-67.6 | CIKARILAN n= 2491 (68%) ort=-0.0675 z=-2.83 [train n=1688 ort -0.084 z -2.91 | test n=803 ort -0.032 z -0.77] | aylik B>A 4/5 | wf train +142.2 test +26.0 [7:OK]
+  K= 8 (canli ~ 4): B n= 1723 toplamR=-19.0 (fark +183.7) maxDD=-71.2 | CIKARILAN n= 1963 (53%) ort=-0.0936 z=-3.50 [train n=1378 ort -0.120 z -3.77 | test n=585 ort -0.032 z -0.65] | aylik B>A 4/5 | wf train +164.9 test +18.8 [7:OK]
+  K=10 (canli ~ 5): B n= 2011 toplamR=-33.7 (fark +169.1) maxDD=-98.3 | CIKARILAN n= 1675 (45%) ort=-0.1009 z=-3.49 [train n=1206 ort -0.139 z -4.12 | test n=469 ort -0.002 z -0.04] | aylik B>A 4/5 | wf train +167.9 test +1.2 [7:OK]
+  K=15 (canli ~ 7): B n= 2595 toplamR=-50.7 (fark +152.1) maxDD=-131.8 | CIKARILAN n= 1091 (30%) ort=-0.1394 z=-3.92 [train n=870 ort -0.148 z -3.71 | test n=221 ort -0.107 z -1.34] | aylik B>A 5/5 | wf train +128.4 test +23.6 [7:OK]
+  K=20 (canli ~10): B n= 3028 toplamR=-76.5 (fark +126.2) maxDD=-165.6 | CIKARILAN n=  658 (18%) ort=-0.1919 z=-4.24 [train n=536 ort -0.212 z -4.24 | test n=122 ort -0.105 z -0.98] | aylik B>A 4/5 | wf train +113.5 test +12.8 [7:OK]
+  K=30 (canli ~14): B n= 3425 toplamR=-111.0 (fark +91.7) maxDD=-189.1 | CIKARILAN n=  261 (7%) ort=-0.3515 z=-5.19 [train n=240 ort -0.331 z -4.64 | test n=21 ort -0.588 z -2.80] | aylik B>A 3/5 | wf train +79.4 test +12.4 [7:OK]
+  K=50 (canli ~24): B n= 3609 toplamR=-161.5 (fark +41.3) maxDD=-213.8 | CIKARILAN n=   77 (2%) ort=-0.5360 z=-4.74 [train n=77 ort -0.536 z -4.74 | test n=0 ort +0.000 z +0.00] | aylik B>A 1/5 | wf train +41.3 test +0.0 [7:RED]
+
+NOT: on-ilan kural [7] (filtre): cikarilan kume z <= -2 VE aylik cogunluk VE wf train+test pozitif. Bolge kurali: tek K degil, komsu K'lar ayni isaret olmali.
+UYARI: havuz eszamanliligi canlidan cok yuksek (310 sembol, 78 bagimsiz portfoy); K'nin canli karsiligi yaklasik K*148/310. Sonuc yalniz 'eszamanlilik giris kalitesini bozuyor mu' sorusuna cevap verir; USDT-DD korumasi R-degismezdir, burada olculmez.
