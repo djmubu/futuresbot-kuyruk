@@ -1,0 +1,6 @@
+2026-09-05 23:07 TR
+md5 uyusmadi, KOSMADI: {"sim_e2e.py": {"beklenen": "37cd0fa28fa1a1e635fa9fb282aabc72", "bulunan": "197d7b727392da9decfac7c79cd9d383"}}
+Traceback (most recent call last):
+  File "/root/kuyruk/kuyruk.py", line 125, in run_job
+    raise RuntimeError("md5 uyusmadi, KOSMADI: " + json.dumps(bad))
+RuntimeError: md5 uyusmadi, KOSMADI: {"sim_e2e.py": {"beklenen": "37cd0fa28fa1a1e635fa9fb282aabc72", "bulunan": "197d7b727392da9decfac7c79cd9d383"}}
