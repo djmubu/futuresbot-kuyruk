@@ -1,0 +1,9 @@
+{
+ "id": "j0066_kotu_retest6c_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/kotu_islemler.py",
+ "args": [
+  "retest6c_oos"
+ ]
+}
