@@ -2,10 +2,10 @@
  "status": "running",
  "queued": "2026-09-05 11:57 TR",
  "box": "ovh",
- "updated": "2026-09-05 12:38 TR",
+ "updated": "2026-09-05 12:48 TR",
  "started": "2026-09-05 11:57 TR",
  "type": "run_ab",
  "bitti": 90,
  "basladi_n": 156,
- "sure_dk": 41
+ "sure_dk": 51
 }
