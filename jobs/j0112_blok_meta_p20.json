@@ -1,0 +1,7 @@
+{
+ "id": "j0112_blok_meta_p20",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kume_blok.py",
+ "args": ["meta_p20"]
+}

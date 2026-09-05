@@ -1,0 +1,7 @@
+{
+ "id": "j0113_blok_meta_ab_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/kume_blok.py",
+ "args": ["meta_ab_oos"]
+}
