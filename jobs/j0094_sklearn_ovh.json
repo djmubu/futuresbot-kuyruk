@@ -1,0 +1,10 @@
+{
+ "id": "j0094_sklearn_ovh",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "./.venv/bin/pip install -q scikit-learn==1.7.2 2>&1 | tail -2; ./.venv/bin/python -c 'import sklearn;print(sklearn.__version__)'"
+ ],
+ "timeout": 1800
+}

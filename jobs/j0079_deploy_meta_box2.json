@@ -1,0 +1,13 @@
+{
+ "id": "j0079_deploy_meta_box2",
+ "box": "box2",
+ "type": "deploy",
+ "files": {
+  "code/sim_e2e.py": "sim_e2e.py",
+  "code/meta_model_v1.pkl": "meta_model_v1.pkl"
+ },
+ "expect_md5": {
+  "sim_e2e.py": "b24d64647ff830df7cb54e96bd53b395",
+  "meta_model_v1.pkl": "d6cc952a8536f97c0b800489972772e7"
+ }
+}

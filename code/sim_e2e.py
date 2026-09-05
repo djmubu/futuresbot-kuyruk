@@ -163,6 +163,9 @@ ap.add_argument("--retest-cancel", default="sl", dest="retest_cancel", choices=[
 ap.add_argument("--retest-min-sl-pct", type=float, default=0.0, dest="retest_min_sl_pct",
                 help="E133: retest girisinde (teyit kapanisi) giris-yapisal stop mesafesi bu %%'nin altindaysa GIRME (sayac retest_stop_yakin). "
                      "0 = kapali (eski davranis). Anomali: cipaya donuste giris stopun dibinde -> risk birimi ~0, R sisiyor (STORJ -294 R, pnl -0.04 USDT)")
+ap.add_argument("--meta-model", default="", dest="meta_model",
+                help="E147 meta-etiketleme: dondurulmus HGB pickle (meta_egit.py). Giris aninda 'cipa tutar mi' olasiligi p; p < --meta-min-p ise GIRME (sayac meta_red). '' = kapali")
+ap.add_argument("--meta-min-p", type=float, default=0.0, dest="meta_min_p", help="esik; 0 = pickle'daki p25 (train %%25 yuzdeligi) kullanilir")
 ap.add_argument("--exit-behaviour", default="", dest="exit_behaviour", choices=["", "1h", "15m"],
                 help="madde 24 (QuantPedia): fiyat-davranisi cikisi — ilk ALEYHTE kapanan bar (long: close<open) kapanisinda cik; close_reason=beh_exit. '' = kapali")
 ap.add_argument("--exit-behaviour-act-r", type=float, default=1.0, dest="exit_behaviour_act_r",
@@ -950,6 +953,16 @@ if getattr(A, "crowd_calendar", ""):
     print("  KALABALIK KAPISI: takvim %d giris (%d dosya) | N>=%d / %d dk" % (len(_mins), len(_files), A.crowd_n, A.crowd_min))
 
 _sz = {"call":0,"no_raw":0,"exc":0,"invalid":0,"zero":0,"ok":0,"sl_capped":0}
+_META = {"m": None}
+if getattr(A, "meta_model", ""):
+    import pickle as _pkl, warnings as _wrn
+    with _wrn.catch_warnings():
+        _wrn.simplefilter("ignore")
+        _mb = _pkl.load(open(A.meta_model, "rb"))
+    _META = {"m": _mb["model"], "num": _mb["num"], "cat": _mb["cat"], "cats": _mb["cats"],
+             "esik": float(A.meta_min_p) if float(getattr(A, "meta_min_p", 0) or 0) > 0 else float(_mb["esikler"]["p25"])}
+    _wrn.filterwarnings("ignore", message="X does not have valid feature names")
+    print("  META MODEL: %s esik p<%.4f (sklearn %s) kolon=%d" % (A.meta_model, _META["esik"], _mb.get("sklearn"), len(_mb.get("kolonlar", []))))
 _sz_reasons = {}
 _risk_by_pos = {}
 _last_risk = {"amt": None}
@@ -1129,6 +1142,48 @@ if not A.toy_sizer:
                     _sz["cooldown_red"] = _sz.get("cooldown_red", 0) + 1
                     return None
             _sz["cooldown_gecti"] = _sz.get("cooldown_gecti", 0) + 1
+        # ── E147: META-ETIKETLEME KAPISI (--meta-model) ───────────────
+        if _META["m"] is not None:
+            try:
+                _isn = raw.indicators_snapshot or {}
+                _srd = _isn.get("sr_decision") or {}
+                _epx = float(raw.entry_price)
+                _isl_m = str(getattr(raw.direction, "value", raw.direction)).lower().startswith("l")
+                def _pct(v):
+                    try: return ((float(v) - _epx) / _epx * 100.0) if (v is not None and _epx > 0) else 0.0
+                    except Exception: return 0.0
+                def _num(v):
+                    try: return float(v) if v is not None and v != "" else 0.0
+                    except Exception: return 0.0
+                _anc = _srd.get("v2_anchor_support") if _isl_m else _srd.get("v2_anchor_resistance")
+                _adp = (abs(float(_anc) - _epx) / _epx * 100.0) if _anc else 0.0
+                _v2s = _srd.get("v2_sl")
+                _sld = (abs(float(_v2s) - _epx) / _epx * 100.0) if _v2s else 0.0
+                _bd = ("<0.8%" if _sld < 0.8 else "0.8-1.5%" if _sld < 1.5 else "1.5-2.5%" if _sld < 2.5 else "2.5-10%" if _sld <= 10 else ">10%(bozuk)") if _v2s else "v2_sl_yok"
+                _saat = int((_SIM_SAAT["ns"] // 3_600_000_000_000) % 24) if _SIM_SAAT["ns"] else 0
+                _f = {"anchor_dist_pct": _adp, "rsi": _num(_isn.get("rsi")), "adx": _num(_isn.get("adx")),
+                      "macd_hist_n": (_num(_isn.get("macd_hist")) / _epx * 100.0) if _epx > 0 else 0.0,
+                      "volume_ratio": _num(_isn.get("volume_ratio")), "supertrend_dir": _num(_isn.get("supertrend_dir")),
+                      "ema_fast_pct": _pct(_isn.get("ema_fast")), "ema_medium_pct": _pct(_isn.get("ema_medium")),
+                      "a_plus_count": _num(_srd.get("a_plus_count")), "level_count": _num(_srd.get("level_count")),
+                      "retest_confirmed_i": 1.0 if str(_srd.get("retest_confirmed")).lower() in ("true", "1") else 0.0,
+                      "nearest_support_pct": _pct(_srd.get("nearest_support")), "nearest_resistance_pct": _pct(_srd.get("nearest_resistance")),
+                      "v2_rr": _num(_srd.get("v2_rr")), "v3_conf_delta": _num(_srd.get("v3_confidence_delta")),
+                      "confidence": _num(getattr(raw, "confidence_score", 0)), "breakout_score": _num(_isn.get("breakout_score")),
+                      "mr_score": _num(_isn.get("mr_score")), "saat": float(_saat), "sl_dist_pct": _sld, "is_long": 1.0 if _isl_m else 0.0}
+                _katv = {"path": str(_isn.get("active_strategy") or "-"), "regime": str(getattr(raw.market_regime, "value", raw.market_regime) or "-"), "srdist_band": _bd}
+                _row = [_f.get(k, 0.0) for k in _META["num"]]
+                for _c in _META["cat"]:
+                    for _v in _META["cats"][_c]:
+                        _row.append(1.0 if _katv[_c] == _v else 0.0)
+                import numpy as _npm
+                _pm = float(_META["m"].predict_proba(_npm.array([_row], dtype=float))[0, 1])
+                if _pm < _META["esik"]:
+                    _sz["meta_red"] = _sz.get("meta_red", 0) + 1
+                    return None
+                _sz["meta_gecti"] = _sz.get("meta_gecti", 0) + 1
+            except Exception as _mexc:
+                _sz["meta_exc"] = _sz.get("meta_exc", 0) + 1
         # ── EK REJIM KAPISI (--block-regimes) — E34 ────────────────
         _brs = getattr(A, "block_regimes", "") or ""
         if _brs:
@@ -1345,11 +1400,11 @@ print("    is_valid=False       %s" % _sz["invalid"])
 print("    qty<=0               %s" % _sz["zero"])
 print("    KABUL                %s" % _sz["ok"])
 print("    SL tavana carpti     %s" % _sz["sl_capped"])
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti", "beh_exit", "beh_exc"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti", "beh_exit", "beh_exc", "meta_red", "meta_gecti", "meta_exc"):
     pass
 for _ek, _ev in sorted(getattr(probe, "retest_stats", {}).items()):
     print("    %-24s %s" % (_ek, _ev))
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti", "beh_exit", "beh_exc"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti", "beh_exit", "beh_exc", "meta_red", "meta_gecti", "meta_exc"):
     if _sz.get(_ek):
         print("    %-20s %s" % (_ek, _sz[_ek]))
 if _sz_reasons:
