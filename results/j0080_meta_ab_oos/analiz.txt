@@ -1,0 +1,49 @@
+  [A_base] BTC dedupe: 23 BTC satiri -> 23 (parca-kopyasi ayiklandi)
+  [B_bayrak] BTC dedupe: 15 BTC satiri -> 15 (parca-kopyasi ayiklandi)
+=== A/B ANALIZ  dirs=meta_ab_oos  A=A_base  B=B_bayrak ===
+
+[1] KOL TOPLAMLARI
+  A              n=  1468 toplamR=    -69.2 mR=-0.0471 WR= 42.0% maxDD=  -145.0
+  B              n=   998 toplamR=    -38.1 mR=-0.0382 WR= 42.1% maxDD=  -118.2
+
+[2] FARK (B-A): mR +0.0089 | toplamR +31.1 | islem -470 | Welch z=+0.18 | parca-esli t=+0.92 (15/31 parca B>A)
+
+[3] AYLIK toplam R
+    2026-04  A=   -47.2 (n= 458)  B=   -24.3 (n= 265)  fark=  +22.9  B>A
+    2026-05  A=   +20.3 (n= 404)  B=    +0.7 (n= 257)  fark=  -19.6  A>B
+    2026-06  A=   -30.9 (n= 102)  B=   -23.5 (n=  79)  fark=   +7.4  B>A
+    2026-07  A=   -75.9 (n= 297)  B=   -57.4 (n= 229)  fark=  +18.5  B>A
+    2026-08  A=   +64.6 (n= 207)  B=   +66.4 (n= 168)  fark=   +1.8  B>A
+    aylik B>A: 4/5
+
+[4] WALK-FORWARD (split=2026-07-01)
+    train A: n=  964 mR=-0.0600 R=   -57.9 | B: n=  601 mR=-0.0784 R=   -47.1 | fark mR=-0.0184 z=-0.30
+    test  A: n=  504 mR=-0.0224 R=   -11.3 | B: n=  397 mR=+0.0226 R=    +9.0 | fark mR=+0.0451 z=+0.55
+
+[5] YOL x KOL (mekanizma kontrolu)
+  -- path
+    breakout               A: n=  233 (15.9%) R=   -61.3 mR=-0.263 | B: n=  160 (16.0%) R=   -25.3 mR=-0.158
+    momentum               A: n=  784 (53.4%) R=   +37.0 mR=+0.047 | B: n=  424 (42.5%) R=   +15.0 mR=+0.035
+    mr                     A: n=  451 (30.7%) R=   -44.9 mR=-0.100 | B: n=  414 (41.5%) R=   -27.8 mR=-0.067
+  -- direction
+    long                   A: n= 1300 (88.6%) R=   -31.6 mR=-0.024 | B: n=  847 (84.9%) R=    -4.0 mR=-0.005
+    short                  A: n=  168 (11.4%) R=   -37.5 mR=-0.223 | B: n=  151 (15.1%) R=   -34.1 mR=-0.226
+  -- regime
+    choppy                 A: n=   53 ( 3.6%) R=   -15.6 mR=-0.295 | B: n=   49 ( 4.9%) R=   -11.5 mR=-0.234
+    early_reversal_up      A: n=  232 (15.8%) R=   -60.2 mR=-0.260 | B: n=  160 (16.0%) R=   -25.3 mR=-0.158
+    ranging                A: n=  337 (23.0%) R=   -16.4 mR=-0.049 | B: n=  309 (31.0%) R=    -6.4 mR=-0.021
+    trending_up            A: n=  785 (53.5%) R=   +36.0 mR=+0.046 | B: n=  424 (42.5%) R=   +15.0 mR=+0.035
+    weakening_up           A: n=   61 ( 4.2%) R=   -12.9 mR=-0.211 | B: n=   56 ( 5.6%) R=   -10.0 mR=-0.178
+
+[6] ESIK KARARI (onceden ilan edilmis kriterler)
+    [RED] Welch z >= 2.0  (z=+0.18)
+    [RED] walk-forward: train VE test farki pozitif (train -0.0184, test +0.0451)
+    [OK ] aylik B>A cogunluk (4/5)
+    [OK ] toplam R dusmuyor (>= -%5)  (fark +31.1)
+
+  SONUC: REDDET/ASKIDA — gecmeyen kriter var (ayna / donem-ozel / gurultu riski)
+
+[7] FILTRE/HUCUM TESTI (E106): cikarilan n=483 R=-32.9 | eklenen n=13 R=-1.9 | ortak n=985 (A R -36.2, B R -36.2, fark +0.0)
+    FILTRE (cikarilan kume negatif mi): ort -0.0682 z(vs0) -1.24 [RED] | aylik dogru-isaret 4/5 [OK ] | wf train R -15.6 z -0.66 / test R -17.3 z -1.41 [RED]
+    toplam R farki +31.1 [OK ]
+  FILTRE SONUCU: REDDET/ASKIDA (filtre testi)
