@@ -1,11 +1,12 @@
 {
- "status": "running",
+ "status": "done",
  "queued": "2026-09-05 20:46 TR",
  "box": "ovh",
- "updated": "2026-09-05 20:47 TR",
+ "updated": "2026-09-05 20:49 TR",
  "started": "2026-09-05 20:46 TR",
  "type": "run_ab",
  "bitti": 0,
  "basladi_n": 3,
- "sure_dk": 1
+ "sure_dk": 1,
+ "finished": "2026-09-05 20:49 TR"
 }
