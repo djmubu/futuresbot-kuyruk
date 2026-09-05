@@ -1,0 +1,28 @@
+777d9b8ab873ec505613763d956413ff  smoke_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_reg/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_meta_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_meta_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_meta_reg/A_base_c02.trades.csv
+  META MODEL: meta_model_v1.pkl esik p<0.3109 (sklearn 1.7.2) kolon=35
+    meta_red             23
+    meta_gecti           4
+TRADES CSV: /root/bot/smoke_meta_flag/A_base_c00.trades.csv (4 satir)
+FEAT CSV: /root/bot/smoke_meta_flag/A_base_c00.feat.csv
+JSON: /root/bot/smoke_meta_flag/A_base_c00.json
+  META MODEL: meta_model_v1.pkl esik p<0.3109 (sklearn 1.7.2) kolon=35
+    meta_gecti           5
+TRADES CSV: /root/bot/smoke_meta_flag/A_base_c01.trades.csv (5 satir)
+FEAT CSV: /root/bot/smoke_meta_flag/A_base_c01.feat.csv
+JSON: /root/bot/smoke_meta_flag/A_base_c01.json
+  META MODEL: meta_model_v1.pkl esik p<0.3109 (sklearn 1.7.2) kolon=35
+    meta_red             20
+    meta_gecti           9
+TRADES CSV: /root/bot/smoke_meta_flag/A_base_c02.trades.csv (7 satir)
+FEAT CSV: /root/bot/smoke_meta_flag/A_base_c02.feat.csv
+JSON: /root/bot/smoke_meta_flag/A_base_c02.json
+   5 smoke_meta_flag/A_base_c00.trades.csv
+   6 smoke_meta_flag/A_base_c01.trades.csv
+   8 smoke_meta_flag/A_base_c02.trades.csv
+  19 total
+
