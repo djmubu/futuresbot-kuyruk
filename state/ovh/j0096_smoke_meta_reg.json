@@ -4,5 +4,8 @@
  "box": "ovh",
  "updated": "2026-09-05 13:05 TR",
  "started": "2026-09-05 13:05 TR",
- "type": "run_ab"
+ "type": "run_ab",
+ "bitti": 0,
+ "basladi_n": 3,
+ "sure_dk": 1
 }
