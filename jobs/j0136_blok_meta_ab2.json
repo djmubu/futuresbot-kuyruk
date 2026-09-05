@@ -1,0 +1,9 @@
+{
+ "id": "j0136_blok_meta_ab2",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kume_blok.py",
+ "args": [
+  "meta_ab2"
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "id": "j0140_kume_limit3",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "limit3"
+ ]
+}
