@@ -1,0 +1,9 @@
+{
+ "id": "j0072_kume_cd30_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "cd30_oos"
+ ]
+}

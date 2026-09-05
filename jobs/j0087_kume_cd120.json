@@ -1,0 +1,9 @@
+{
+ "id": "j0087_kume_cd120",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "cd120"
+ ]
+}

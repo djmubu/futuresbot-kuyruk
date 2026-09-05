@@ -1,8 +1,8 @@
 {
- "id": "j0080_smoke_feat_reg",
+ "id": "j0080b_smoke_cd_flag",
  "box": "ovh",
  "type": "run_ab",
- "out": "smoke_feat_reg",
+ "out": "smoke_cd_flag",
  "args": [
   "--offset",
   "0",
@@ -16,13 +16,13 @@
   "60",
   "--arms",
   "A",
-  "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
+  "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0 --reentry-cooldown-min 30",
   "--ab-set="
  ],
  "expect_md5": {
   "sim_e2e.py": "d06a65c90f778bc764d92a90eee9a7df"
  },
  "analiz": [
-  "smoke_feat_reg"
+  "smoke_cd_flag"
  ]
 }

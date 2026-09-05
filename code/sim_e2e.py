@@ -163,6 +163,10 @@ ap.add_argument("--retest-cancel", default="sl", dest="retest_cancel", choices=[
 ap.add_argument("--retest-min-sl-pct", type=float, default=0.0, dest="retest_min_sl_pct",
                 help="E133: retest girisinde (teyit kapanisi) giris-yapisal stop mesafesi bu %%'nin altindaysa GIRME (sayac retest_stop_yakin). "
                      "0 = kapali (eski davranis). Anomali: cipaya donuste giris stopun dibinde -> risk birimi ~0, R sisiyor (STORJ -294 R, pnl -0.04 USDT)")
+ap.add_argument("--reentry-cooldown-min", type=float, default=0.0, dest="reentry_cooldown_min",
+                help="madde 28 (E119/E140): sembolde son KAPANISTAN sonra N dk yeni giris yok (0 = kapali). Sayaclar cooldown_red / cooldown_gecti")
+ap.add_argument("--reentry-cooldown-mode", default="loss", dest="reentry_cooldown_mode", choices=["loss", "all"],
+                help="loss = yalniz stop/kayipla kapananlardan sonra (varsayilan) | all = her kapanistan sonra")
 ap.add_argument("--retest-atr", type=float, default=0.0, dest="retest_atr",
                 help="geri cekilme esigi = k x ATR(14, 15m) / fiyat (yuzde yerine). >0 ise --retest-pct yok sayilir. E124 secimi: 0.5")
 ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
@@ -825,6 +829,17 @@ def _fill_tagged(order, event):
     except Exception: pass
     return f
 exchange._fill_entry = _fill_tagged
+# madde 28: sembol -> (son kapanis ts_ns, sebep, realized_pnl) — cooldown kapisi icin
+_last_close = {}
+_orig_close_pos = exchange._close_position
+def _close_tagged(pos, exit_px, ts_ns, reason, *a, **kw):
+    f = _orig_close_pos(pos, exit_px, ts_ns, reason, *a, **kw)
+    try:
+        _last_close[pos.symbol] = (int(ts_ns), str(reason), float(pos.realized_pnl))
+    except Exception:
+        pass
+    return f
+exchange._close_position = _close_tagged
 _orig_obc = exchange.on_bar_close
 def _obc_tracked(event):
     # capa testi icin fiyat yolu: pozisyon ACIKKEN gorulen 1m dip/tepe.
@@ -1066,6 +1081,16 @@ if not A.toy_sizer:
                 _sz["kalabalik_red"] = _sz.get("kalabalik_red", 0) + 1
                 return None
             _sz["kalabalik_gecti"] = _sz.get("kalabalik_gecti", 0) + 1
+        # ── madde 28: YENIDEN-GIRIS COOLDOWN (--reentry-cooldown-min) ──
+        _cdm = float(getattr(A, "reentry_cooldown_min", 0) or 0)
+        if _cdm > 0 and _SIM_SAAT["ns"]:
+            _lc = _last_close.get(sig.symbol)
+            if _lc and _lc[0] and (_SIM_SAAT["ns"] - _lc[0]) < _cdm * 60e9:
+                _kayip = (_lc[2] <= 0) or str(_lc[1]).lower().startswith("sl")
+                if str(getattr(A, "reentry_cooldown_mode", "loss")) == "all" or _kayip:
+                    _sz["cooldown_red"] = _sz.get("cooldown_red", 0) + 1
+                    return None
+            _sz["cooldown_gecti"] = _sz.get("cooldown_gecti", 0) + 1
         # ── EK REJIM KAPISI (--block-regimes) — E34 ────────────────
         _brs = getattr(A, "block_regimes", "") or ""
         if _brs:
@@ -1279,11 +1304,11 @@ print("    is_valid=False       %s" % _sz["invalid"])
 print("    qty<=0               %s" % _sz["zero"])
 print("    KABUL                %s" % _sz["ok"])
 print("    SL tavana carpti     %s" % _sz["sl_capped"])
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti"):
     pass
 for _ek, _ev in sorted(getattr(probe, "retest_stats", {}).items()):
     print("    %-24s %s" % (_ek, _ev))
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti"):
     if _sz.get(_ek):
         print("    %-20s %s" % (_ek, _sz[_ek]))
 if _sz_reasons:
