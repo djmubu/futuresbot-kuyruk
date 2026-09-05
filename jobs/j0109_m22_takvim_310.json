@@ -1,0 +1,7 @@
+{
+ "id": "j0109_m22_takvim_310",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/madde22_takvim.py",
+ "args": ["beh1"]
+}

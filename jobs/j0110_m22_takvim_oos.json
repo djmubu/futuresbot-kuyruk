@@ -1,0 +1,7 @@
+{
+ "id": "j0110_m22_takvim_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/madde22_takvim.py",
+ "args": ["meta_oos_p20"]
+}
