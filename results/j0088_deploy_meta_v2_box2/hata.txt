@@ -1,0 +1,10 @@
+2026-09-05 20:41 TR
+py_compile hata: usage: py_compile.py [-h] [-q] filenames [filenames ...]
+py_compile.py: error: the following arguments are required: filenames
+
+Traceback (most recent call last):
+  File "/root/kuyruk/kuyruk.py", line 120, in run_job
+    raise RuntimeError("py_compile hata: " + comp.stderr[-2000:])
+RuntimeError: py_compile hata: usage: py_compile.py [-h] [-q] filenames [filenames ...]
+py_compile.py: error: the following arguments are required: filenames
+

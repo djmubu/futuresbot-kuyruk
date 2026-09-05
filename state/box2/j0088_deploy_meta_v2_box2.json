@@ -1,8 +1,10 @@
 {
- "status": "running",
+ "status": "failed",
  "queued": "2026-09-05 20:41 TR",
  "box": "box2",
  "updated": "2026-09-05 20:41 TR",
  "started": "2026-09-05 20:41 TR",
- "type": "deploy"
+ "type": "deploy",
+ "finished": "2026-09-05 20:41 TR",
+ "hata": "py_compile hata: usage: py_compile.py [-h] [-q] filenames [filenames ...]\npy_compile.py: error: the following arguments are required: filenames\n"
 }
