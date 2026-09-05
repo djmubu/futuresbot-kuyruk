@@ -1,0 +1,29 @@
+{
+ "id": "j0084_meta_oos_p20",
+ "box": "box2",
+ "type": "run_ab",
+ "out": "meta_oos_p20",
+ "args": [
+  "--offset",
+  "310",
+  "--limit",
+  "130",
+  "--chunk",
+  "4",
+  "--jobs",
+  "38",
+  "--days",
+  "180",
+  "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
+  "--b-flags=--meta-model meta_model_v1.pkl --meta-min-p 0.2914",
+  "--ab-set="
+ ],
+ "expect_md5": {
+  "sim_e2e.py": "b24d64647ff830df7cb54e96bd53b395",
+  "run_ab.py": "f477d4fa17f9713f62413cb60ba3b5c7",
+  "meta_model_v1.pkl": "d6cc952a8536f97c0b800489972772e7"
+ },
+ "analiz": [
+  "meta_oos_p20"
+ ]
+}

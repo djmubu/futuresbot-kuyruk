@@ -1,0 +1,9 @@
+{
+ "id": "j0085_kume_meta_oos_p20",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "meta_oos_p20"
+ ]
+}
