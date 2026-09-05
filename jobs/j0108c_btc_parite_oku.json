@@ -1,7 +1,0 @@
-{
- "id": "j0108c_btc_parite_oku",
- "box": "ovh",
- "type": "script",
- "script": "scripts/sh.py",
- "args": ["ls btc_parite; python3 -c \"import json,glob;[print(f, json.dumps({k:v for k,v in json.load(open(f)).items() if 'reject' in k or 'stage' in k or 'gate' in k or 'signal' in k or 'entries' in k or 'trades' in k}, ensure_ascii=False)[:1500]) for f in sorted(glob.glob('btc_parite/A_base_c0*.json'))]\"; grep -h BTCUSDT btc_parite/A_base_c0*.trades.csv | cut -c1-120 | tail -20; grep -h -i 'btc' btc_parite/logs/A_base_c0*.log | grep -i -E 'reject|gate|htf|rr|trigger' | sort | uniq -c | sort -rn | head -20"]
-}
