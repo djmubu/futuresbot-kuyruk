@@ -1,5 +1,5 @@
 {
- "id": "j0089c_smoke_beh_cmp",
+ "id": "j0100c_smoke_beh_cmp",
  "box": "ovh",
  "type": "script",
  "script": "scripts/sh.py",

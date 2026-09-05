@@ -1,9 +1,9 @@
 {
- "id": "j0093_kume_beh2",
+ "id": "j0102_kume_beh1",
  "box": "ovh",
  "type": "script",
  "script": "scripts/kume_stats.py",
  "args": [
-  "beh2"
+  "beh1"
  ]
 }
