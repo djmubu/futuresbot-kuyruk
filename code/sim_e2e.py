@@ -266,6 +266,8 @@ _BOOT_ENV = (
     # v4.6.x md.16 — regime routing lever (adaptif ADX percentile/floor A/B)
     ("ADAPTIVE_ADX_PERCENTILE",          "strategy", "adaptive_adx_percentile"),
     ("ADAPTIVE_ADX_FLOOR",               "strategy", "adaptive_adx_floor"),
+    # E160 (madde 2 / M34): canli yama_majroute — BTC/ETH/SOL momentum override; sim tablosunda YOKTU (drift), simdi bagli
+    ("MAJORS_MOMENTUM_OVERRIDE",         "strategy", "majors_momentum_override_enabled"),
 )
 # bootstrap'in okudugu ama SIM'i ilgilendirmeyen anahtarlar (bilincli haric)
 _BOOT_ENV_IGNORE = {
