@@ -1,0 +1,7 @@
+{
+ "id": "j0119_topla_fp310",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/topla_feat.py",
+ "args": ["fp310", "A_base"]
+}
