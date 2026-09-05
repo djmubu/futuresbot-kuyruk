@@ -1,0 +1,28 @@
+{
+ "id": "j0089_smoke_beh_reg",
+ "box": "ovh",
+ "type": "run_ab",
+ "out": "smoke_beh_reg",
+ "args": [
+  "--offset",
+  "0",
+  "--limit",
+  "12",
+  "--chunk",
+  "4",
+  "--jobs",
+  "3",
+  "--days",
+  "60",
+  "--arms",
+  "A",
+  "--both-flags=--sr-geometry --block-down-regimes --mr-anchor-min-pct 1.0 --env-set SL_MAX_DIST_PCT=0",
+  "--ab-set="
+ ],
+ "expect_md5": {
+  "sim_e2e.py": "09891a544117e79a2deb15df8212803e"
+ },
+ "analiz": [
+  "smoke_beh_reg"
+ ]
+}

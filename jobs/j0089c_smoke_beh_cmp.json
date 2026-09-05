@@ -1,0 +1,9 @@
+{
+ "id": "j0089c_smoke_beh_cmp",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "md5sum smoke_reg/A_base_c0*.trades.csv smoke_beh_reg/A_base_c0*.trades.csv; grep -h 'beh_' smoke_beh_flag/logs/A_base_c0*.log; cut -d, -f9 smoke_beh_flag/A_base_c0*.trades.csv | sort | uniq -c"
+ ]
+}

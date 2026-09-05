@@ -163,6 +163,12 @@ ap.add_argument("--retest-cancel", default="sl", dest="retest_cancel", choices=[
 ap.add_argument("--retest-min-sl-pct", type=float, default=0.0, dest="retest_min_sl_pct",
                 help="E133: retest girisinde (teyit kapanisi) giris-yapisal stop mesafesi bu %%'nin altindaysa GIRME (sayac retest_stop_yakin). "
                      "0 = kapali (eski davranis). Anomali: cipaya donuste giris stopun dibinde -> risk birimi ~0, R sisiyor (STORJ -294 R, pnl -0.04 USDT)")
+ap.add_argument("--exit-behaviour", default="", dest="exit_behaviour", choices=["", "1h", "15m"],
+                help="madde 24 (QuantPedia): fiyat-davranisi cikisi — ilk ALEYHTE kapanan bar (long: close<open) kapanisinda cik; close_reason=beh_exit. '' = kapali")
+ap.add_argument("--exit-behaviour-act-r", type=float, default=1.0, dest="exit_behaviour_act_r",
+                help="aktivasyon: pozisyon MFE >= bu kadar R olduktan sonra kural devreye girer (0 = giristen itibaren, 'saf')")
+ap.add_argument("--exit-behaviour-no-tp", action="store_true", dest="exit_behaviour_no_tp",
+                help="sabit TP'yi kaldir (cok uzaga koy): cikis yalniz yapisal SL ya da davranis kurali")
 ap.add_argument("--reentry-cooldown-min", type=float, default=0.0, dest="reentry_cooldown_min",
                 help="madde 28 (E119/E140): sembolde son KAPANISTAN sonra N dk yeni giris yok (0 = kapali). Sayaclar cooldown_red / cooldown_gecti")
 ap.add_argument("--reentry-cooldown-mode", default="loss", dest="reentry_cooldown_mode", choices=["loss", "all"],
@@ -861,8 +867,40 @@ def _obc_tracked(event):
                 if event.high_px > _e[1]: _e[1] = event.high_px
     except Exception:
         pass
-    return _orig_obc(event)
+    _f = _orig_obc(event)
+    # ── madde 24: fiyat-davranisi cikisi (--exit-behaviour) ─────────
+    _bm = getattr(A, "exit_behaviour", "") or ""
+    if _bm and str(getattr(event, "timeframe", "1m")) == "1m":
+        try:
+            _per = 3600_000_000_000 if _bm == "1h" else 900_000_000_000
+            _key = int(event.open_ts_ns // _per)
+            _bar_kapandi = (int(event.close_ts_ns) % _per) == 0
+            for _p in exchange.open_positions(event.symbol):
+                if _p.opened_ts_ns >= event.close_ts_ns: continue
+                _st = _beh_by_pos.get(_p.position_id)
+                if _st is None or _st["key"] != _key:
+                    # yeni davranis bari: acilisi kaydet (pozisyon bar ortasinda acildiysa ilk kismi bar atlanir)
+                    _tam = (int(event.open_ts_ns) % _per) == 0
+                    _beh_by_pos[_p.position_id] = {"key": _key, "open": (float(event.open_px) if _tam else None)}
+                    _st = _beh_by_pos[_p.position_id]
+                if not _bar_kapandi or _st["open"] is None: continue
+                _isl = str(getattr(_p.direction, "value", _p.direction)).lower() in ("long", "buy")
+                _cl = float(event.close_px); _op = _st["open"]
+                _aleyhte = (_cl < _op) if _isl else (_cl > _op)
+                if not _aleyhte: continue
+                _act = float(getattr(A, "exit_behaviour_act_r", 1.0) or 0)
+                if _act > 0:
+                    _e = _ext_by_pos.get(_p.position_id); _sl0 = getattr(_p, "orig_sl_px", None) or getattr(_p, "sl_px", None); _risk = abs(float(_p.entry_px) - float(_sl0)) if _sl0 else 0.0
+                    if not _e or _risk <= 0: continue
+                    _mfe = ((_e[1] - float(_p.entry_px)) if _isl else (float(_p.entry_px) - _e[0])) / _risk
+                    if _mfe < _act: continue
+                exchange.close_position(_p.position_id, int(event.close_ts_ns), _cl, "beh_exit")
+                _sz["beh_exit"] = _sz.get("beh_exit", 0) + 1
+        except Exception:
+            _sz["beh_exc"] = _sz.get("beh_exc", 0) + 1
+    return _f
 exchange.on_bar_close = _obc_tracked
+_beh_by_pos = {}
 
 # ── 1. ADIM: GERCEK PositionSizer'i sim'e bagla ───────────────────
 # bridge.py:26-28 "production swaps in the real PositionSizer" diyor ama
@@ -1214,6 +1252,9 @@ if not A.toy_sizer:
             _tp = None
         if _tp is None: _tp = sig.take_profit
         _sz["tp_from_sizer"] = _sz.get("tp_from_sizer", 0) + (1 if _tp != sig.take_profit else 0)
+        if getattr(A, "exit_behaviour_no_tp", False) and _tp:
+            _isl_tp = str(getattr(raw.direction, "value", raw.direction)).lower().startswith("l")
+            _tp = float(raw.entry_price) * (11.0 if _isl_tp else 0.09)   # fiilen TP yok
         return _SO(qty=_q, sl_px=_slp, tp_px=_tp)
     adapter._sizer = _real_sizer
     _PF_REF["pf"] = _pf
@@ -1304,11 +1345,11 @@ print("    is_valid=False       %s" % _sz["invalid"])
 print("    qty<=0               %s" % _sz["zero"])
 print("    KABUL                %s" % _sz["ok"])
 print("    SL tavana carpti     %s" % _sz["sl_capped"])
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti", "beh_exit", "beh_exc"):
     pass
 for _ek, _ev in sorted(getattr(probe, "retest_stats", {}).items()):
     print("    %-24s %s" % (_ek, _ev))
-for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti"):
+for _ek in ("down_rejim_red", "dss_izin", "kalabalik_red", "kalabalik_gecti", "htf_yon_red", "htf_yon_gecti", "htf_veri_yok", "htf_exc", "htf_yol_disi", "mr_cipa_yakin_red", "baglam_only_red", "cooldown_red", "cooldown_gecti", "beh_exit", "beh_exc"):
     if _sz.get(_ek):
         print("    %-20s %s" % (_ek, _sz[_ek]))
 if _sz_reasons:
