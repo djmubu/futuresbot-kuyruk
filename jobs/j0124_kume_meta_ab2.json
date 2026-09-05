@@ -1,0 +1,9 @@
+{
+ "id": "j0124_kume_meta_ab2",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/kume_stats.py",
+ "args": [
+  "meta_ab2"
+ ]
+}

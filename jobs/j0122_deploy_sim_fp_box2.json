@@ -1,0 +1,11 @@
+{
+ "id": "j0122_deploy_sim_fp_box2",
+ "box": "box2",
+ "type": "deploy",
+ "files": {
+  "code/sim_e2e.py": "sim_e2e.py"
+ },
+ "expect_md5": {
+  "sim_e2e.py": "37cd0fa28fa1a1e635fa9fb282aabc72"
+ }
+}
