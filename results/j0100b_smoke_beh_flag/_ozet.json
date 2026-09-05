@@ -1,0 +1,26 @@
+{
+ "A_base": {
+  "runs": 3,
+  "trades": 42,
+  "wins": 21,
+  "entries": 44,
+  "actionable": 102,
+  "sizer_rejected": 0,
+  "nR": 42,
+  "totR": -2.7840814923118526,
+  "expR": -0.06628765457885363,
+  "wr": 0.5
+ },
+ "B_bayrak": {
+  "runs": 0,
+  "trades": 0,
+  "wins": 0,
+  "entries": 0,
+  "actionable": 0,
+  "sizer_rejected": 0,
+  "nR": 0,
+  "totR": 0,
+  "expR": 0.0,
+  "wr": 0.0
+ }
+}
