@@ -1,0 +1,25 @@
+777d9b8ab873ec505613763d956413ff  smoke_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_reg/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_beh_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_beh_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_beh_reg/A_base_c02.trades.csv
+    beh_exit             7
+    beh_exit             7  100.0      8.37     1.195      0.43      0.087
+TRADES CSV: /root/bot/smoke_beh_flag/A_base_c00.trades.csv (11 satir)
+FEAT CSV: /root/bot/smoke_beh_flag/A_base_c00.feat.csv
+JSON: /root/bot/smoke_beh_flag/A_base_c00.json
+    beh_exit             3
+    beh_exit             3   66.7      1.21     0.402      0.79      0.069
+TRADES CSV: /root/bot/smoke_beh_flag/A_base_c01.trades.csv (5 satir)
+FEAT CSV: /root/bot/smoke_beh_flag/A_base_c01.feat.csv
+JSON: /root/bot/smoke_beh_flag/A_base_c01.json
+    beh_exit             13
+    beh_exit            13   92.3      7.80     0.600      0.58      0.073
+TRADES CSV: /root/bot/smoke_beh_flag/A_base_c02.trades.csv (26 satir)
+FEAT CSV: /root/bot/smoke_beh_flag/A_base_c02.feat.csv
+JSON: /root/bot/smoke_beh_flag/A_base_c02.json
+     23 beh_exit
+      3 close_reason
+     19 sl
+
