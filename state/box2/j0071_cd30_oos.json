@@ -1,11 +1,12 @@
 {
- "status": "running",
+ "status": "done",
  "queued": "2026-09-05 11:24 TR",
  "box": "box2",
- "updated": "2026-09-05 12:54 TR",
+ "updated": "2026-09-05 12:59 TR",
  "started": "2026-09-05 11:24 TR",
  "type": "run_ab",
  "bitti": 52,
  "basladi_n": 62,
- "sure_dk": 91
+ "sure_dk": 91,
+ "finished": "2026-09-05 12:59 TR"
 }
