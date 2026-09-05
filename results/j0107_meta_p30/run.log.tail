@@ -1,0 +1,80 @@
+  [BITTI  ] B_bayrak_c67       rc=0   6212s gecti  (153/156)
+  [BITTI  ] B_bayrak_c66       rc=0   6227s gecti  (154/156)
+  [BITTI  ] A_base_c71         rc=0   6236s gecti  (155/156)
+  [BITTI  ] B_bayrak_c71       rc=0   6275s gecti  (156/156)
+
+tum kosular bitti: 105 dakika
+
+========================================================================
+A/B SONUCU — bayrak
+========================================================================
+kol                  kosu   islem     WR%  toplam R   R/islem sizer reddi
+-------------------------------------------------------------------------
+A_base                 78    3686    41.8   -202.76   -0.0550          11
+B_bayrak               78    2373    49.2    301.09    0.1269           8
+
+FARK (A - B): beklenti -0.1819 R/islem | islem sayisi +1313
+NOT: istatistiksel anlamlilik icin islem sayilari onemli;
+     tek kolda 200'un altindaysa sonucu kesin okuma.
+
+A_base — yol bazinda:
+    breakout     n=712   toplam  -118.00 R | -0.1657 R/islem
+    momentum     n=1750  toplam   -86.62 R | -0.0495 R/islem
+    mr           n=1224  toplam     1.87 R | +0.0015 R/islem
+
+B_bayrak — yol bazinda:
+    breakout     n=451   toplam    20.01 R | +0.0444 R/islem
+    mr           n=1047  toplam   118.22 R | +0.1129 R/islem
+    momentum     n=875   toplam   162.85 R | +0.1861 R/islem
+
+A_base — YON:
+    long                   n=3252   toplam   -190.81 R | -0.0587 R/islem | WR %41.7
+    short                  n=434    toplam    -11.94 R | -0.0275 R/islem | WR %42.6
+
+B_bayrak — YON:
+    long                   n=2031   toplam    248.04 R | +0.1221 R/islem | WR %49.0
+    short                  n=342    toplam     53.04 R | +0.1551 R/islem | WR %50.0
+
+A_base — YOL x YON:
+    breakout|short         n=40     toplam    -10.37 R | -0.2592 R/islem | WR %35.0
+    breakout|long          n=671    toplam   -106.24 R | -0.1583 R/islem | WR %38.3
+    momentum|long          n=1752   toplam    -86.44 R | -0.0493 R/islem | WR %42.2
+    mean_reversion|short   n=394    toplam     -1.57 R | -0.0040 R/islem | WR %43.4
+    mean_reversion|long    n=829    toplam      1.87 R | +0.0023 R/islem | WR %43.4
+
+B_bayrak — YOL x YON:
+    breakout|long          n=436    toplam     15.18 R | +0.0348 R/islem | WR %45.9
+    mean_reversion|long    n=719    toplam     68.72 R | +0.0956 R/islem | WR %47.3
+    mean_reversion|short   n=327    toplam     47.93 R | +0.1466 R/islem | WR %49.5
+    momentum|long          n=876    toplam    164.15 R | +0.1874 R/islem | WR %52.1
+    breakout|short         n=15     toplam      5.11 R | +0.3409 R/islem | WR %60.0
+
+A_base — REJIM:
+    volatility_expansion   n=9      toplam     -4.40 R | -0.4886 R/islem | WR %22.2
+    early_reversal_up      n=702    toplam   -112.21 R | -0.1598 R/islem | WR %38.3
+    trending_up            n=1752   toplam    -86.44 R | -0.0493 R/islem | WR %42.2
+    ranging                n=894    toplam     -1.64 R | -0.0018 R/islem | WR %43.4
+    weakening_up           n=185    toplam      0.63 R | +0.0034 R/islem | WR %43.2
+    choppy                 n=144    toplam      1.31 R | +0.0091 R/islem | WR %43.8
+
+B_bayrak — REJIM:
+    volatility_expansion   n=4      toplam     -1.72 R | -0.4296 R/islem | WR %25.0
+    early_reversal_up      n=447    toplam     22.01 R | +0.0492 R/islem | WR %46.5
+    ranging                n=762    toplam     79.93 R | +0.1049 R/islem | WR %47.8
+    choppy                 n=128    toplam     15.49 R | +0.1210 R/islem | WR %48.4
+    weakening_up           n=156    toplam     21.22 R | +0.1360 R/islem | WR %48.7
+    trending_up            n=876    toplam    164.15 R | +0.1874 R/islem | WR %52.1
+
+A_base — CIKIS:
+    sl_gap                 n=30     toplam    -41.67 R | -1.3891 R/islem | WR %0.0
+    sl                     n=2114   toplam  -2238.52 R | -1.0589 R/islem | WR %0.0
+    tp                     n=1530   toplam   2060.02 R | +1.3464 R/islem | WR %100.0
+    tp_gap                 n=12     toplam     17.42 R | +1.4516 R/islem | WR %100.0
+
+B_bayrak — CIKIS:
+    sl_gap                 n=13     toplam    -18.83 R | -1.4482 R/islem | WR %0.0
+    sl                     n=1193   toplam  -1258.83 R | -1.0552 R/islem | WR %0.0
+    tp                     n=1158   toplam   1566.32 R | +1.3526 R/islem | WR %100.0
+    tp_gap                 n=9      toplam     12.43 R | +1.3810 R/islem | WR %100.0
+
+ozet: /root/bot/meta_p30/_ozet.json
