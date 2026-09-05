@@ -1,0 +1,8 @@
+  [A_base] BTC dedupe: 0 BTC satiri -> 0 (parca-kopyasi ayiklandi)
+=== A/B ANALIZ  dirs=smoke_meta_flag  A=A_base  B=B_bayrak ===
+
+[1] KOL TOPLAMLARI
+  A              n=    16 toplamR=     +2.3 mR=+0.1424 WR= 50.0% maxDD=    -5.7
+  B              VERI YOK
+
+[stderr]
