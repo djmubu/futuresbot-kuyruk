@@ -1,0 +1,11 @@
+DIR=meta_ab2 A n=0 B n=0 | CIKARILAN n=0 toplam=+0.0
+
+[stderr]
+Traceback (most recent call last):
+  File "/root/kuyruk/scripts/kume_blok.py", line 65, in <module>
+    t, n, pos = blok_esli(A, B, saat)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kuyruk/scripts/kume_blok.py", line 55, in blok_esli
+    n = len(dif); m = sum(dif) / n; v = sum((x - m) ** 2 for x in dif) / (n - 1)
+                      ~~~~~~~~~^~~
+ZeroDivisionError: division by zero

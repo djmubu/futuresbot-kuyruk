@@ -1,0 +1,6 @@
+2026-09-05 23:07 TR
+script rc=1
+Traceback (most recent call last):
+  File "/root/kuyruk/kuyruk.py", line 170, in run_job
+    raise RuntimeError(f"script rc={pr.returncode}")
+RuntimeError: script rc=1
