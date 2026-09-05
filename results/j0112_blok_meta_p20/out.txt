@@ -1,0 +1,7 @@
+DIR=meta_p20 A n=3686 B n=2734 | CIKARILAN n=960 toplam=-383.1
+  cikarilan all   n= 960 ort=-0.3990 | z_iid=-11.46 | z_24h=-9.24 (blok 98, SE 0.0432) | z_72h=-7.86 (blok 41, SE 0.0508) [OK]
+  cikarilan train n= 724 ort=-0.4870 | z_iid=-12.68 | z_24h=-10.41 (blok 52, SE 0.0468) | z_72h=-9.44 (blok 23, SE 0.0516) [OK]
+  cikarilan test  n= 236 ort=-0.1292 | z_iid=-1.70 | z_24h=-1.65 (blok 46, SE 0.0782) | z_72h=-1.48 (blok 18, SE 0.0875) [RED]
+  blok-esli B-A fark (24h): t=+5.91 blok=119 B>A 74/119
+  blok-esli B-A fark (72h): t=+4.58 blok=45 B>A 35/45
+NOT: z_iid mevcut kume_stats ile ayni tanim (ort/SE). Blok z'ler ayni-gun bagimliligini hesaba katar; kural E154'te ilan edildi.
