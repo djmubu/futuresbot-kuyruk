@@ -1,0 +1,10 @@
+{
+ "id": "j0070_topla_meta1_oos",
+ "box": "box2",
+ "type": "script",
+ "script": "scripts/topla_feat.py",
+ "args": [
+  "meta1_oos",
+  "A_base"
+ ]
+}

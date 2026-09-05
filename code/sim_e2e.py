@@ -744,6 +744,8 @@ _ext_by_pos = {}        # position_id -> [islem boyunca min_low, max_high] (1m)
 _SIM_SAAT = {"ns": 0}   # son 1m bar kapanisi (izleme listesi gun secimi icin)
 _PF_REF = {"pf": None}   # sizer blogu kurulduktan sonra doldurulur
 _meta_by_pos = {}        # position_id -> (rejim, yol)
+_feat_by_order = {}      # E141: order_id -> giris-ani ozellik sozlugu
+_feat_by_pos = {}
 _orig_submit = exchange.submit_market_entry
 def _submit_tagged(**kw):
     oid = _orig_submit(**kw)
@@ -775,6 +777,30 @@ def _submit_tagged(**kw):
         else:
             _bd = "v2_sl_yok"
     _sr_by_order[oid] = (_rz, _bd)
+    # E141: giris-ani ozellikleri (meta-etiketleme verisi) — ayri .feat.csv'ye yazilir, trades.csv degismez
+    try:
+        if _sg is not None:
+            _isn = getattr(_sg, "indicators_snapshot", None) or {}
+            _srd2 = _isn.get("sr_decision") or {}
+            _epx = float(getattr(_sg, "entry_price", 0) or 0)
+            def _pct(v):
+                try: return "%.4f" % ((float(v) - _epx) / _epx * 100.0) if (v is not None and _epx > 0) else ""
+                except Exception: return ""
+            def _g(d, k):
+                v = d.get(k); return "" if v is None else v
+            _feat_by_order[oid] = {
+                "rsi": _g(_isn, "rsi"), "adx": _g(_isn, "adx"), "macd_hist": _g(_isn, "macd_hist"),
+                "volume_ratio": _g(_isn, "volume_ratio"), "supertrend_dir": _g(_isn, "supertrend_dir"),
+                "ema_fast_pct": _pct(_isn.get("ema_fast")), "ema_medium_pct": _pct(_isn.get("ema_medium")),
+                "a_plus_count": _g(_srd2, "a_plus_count"), "level_count": _g(_srd2, "level_count"),
+                "retest_confirmed": _g(_srd2, "retest_confirmed"), "retest_reason": _g(_srd2, "retest_reason"),
+                "nearest_support_pct": _pct(_srd2.get("nearest_support")), "nearest_resistance_pct": _pct(_srd2.get("nearest_resistance")),
+                "v2_rr": _g(_srd2, "v2_rr"), "v3_conf_delta": _g(_srd2, "v3_confidence_delta"),
+                "confidence": getattr(_sg, "confidence_score", ""), "breakout_score": _g(_isn, "breakout_score"),
+                "mr_score": _g(_isn, "mr_score"), "active_strategy": _g(_isn, "active_strategy"),
+            }
+    except Exception:
+        pass
     return oid
 exchange.submit_market_entry = _submit_tagged
 _orig_fill = exchange._fill_entry
@@ -788,6 +814,7 @@ def _fill_tagged(order, event):
         _anchor_by_pos[_pid] = _anchor_by_order.get(order.order_id)
         if _last_risk["amt"]: _risk_by_pos[_pid] = _last_risk["amt"]
         _meta_by_pos[_pid] = (_last_risk.get("regime", "-"), _last_risk.get("path", "-"))
+        if order.order_id in _feat_by_order: _feat_by_pos[_pid] = _feat_by_order[order.order_id]
         if _PF_REF["pf"] is not None:
             from decimal import Decimal as _D2
             _PF_REF["pf"].on_fill(
@@ -1484,6 +1511,18 @@ if A.json_out:
                                  (_a[0] if _a else ""), _adp, _anchor_held(_x),
                                  (_e[0] if _e else ""), (_e[1] if _e else "")])
             print("TRADES CSV: %s (%d satir)" % (_csvp, len(_tr)))
+            # E141: ozellik dosyasi (position_id anahtari; trades.csv ile join)
+            if _feat_by_pos:
+                _fk = ["rsi", "adx", "macd_hist", "volume_ratio", "supertrend_dir", "ema_fast_pct", "ema_medium_pct",
+                       "a_plus_count", "level_count", "retest_confirmed", "retest_reason", "nearest_support_pct",
+                       "nearest_resistance_pct", "v2_rr", "v3_conf_delta", "confidence", "breakout_score", "mr_score", "active_strategy"]
+                _fcp = Path(A.json_out).with_suffix(".feat.csv")
+                with open(_fcp, "w", newline="", encoding="utf-8") as _ff:
+                    _fw = _csv.writer(_ff); _fw.writerow(["position_id"] + _fk)
+                    for _v, _x in _tr:
+                        _fd = _feat_by_pos.get(_x.position_id)
+                        if _fd: _fw.writerow([_x.position_id] + [_fd.get(k, "") for k in _fk])
+                print("FEAT CSV: %s" % _fcp)
         except Exception as _ce:
             print("!! trades csv yazilamadi: %r" % _ce)
         _bucket(lambda x: "%s|%s" % (_meta_by_pos.get(x.position_id, ("-", "-"))[1], _dirof(x)),

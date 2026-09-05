@@ -1,0 +1,9 @@
+{
+ "id": "j0081_smoke_feat_cmp",
+ "box": "ovh",
+ "type": "script",
+ "script": "scripts/sh.py",
+ "args": [
+  "md5sum smoke_reg/A_base_c0*.trades.csv smoke_feat_reg/A_base_c0*.trades.csv; head -3 smoke_feat_reg/A_base_c00.feat.csv; wc -l smoke_feat_reg/A_base_c0*.feat.csv"
+ ]
+}

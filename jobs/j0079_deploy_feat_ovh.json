@@ -1,0 +1,11 @@
+{
+ "id": "j0079_deploy_feat_ovh",
+ "box": "ovh",
+ "type": "deploy",
+ "files": {
+  "code/sim_e2e.py": "sim_e2e.py"
+ },
+ "expect_md5": {
+  "sim_e2e.py": "6ed43ae615d1dcdf31173f1a04f02ddb"
+ }
+}
