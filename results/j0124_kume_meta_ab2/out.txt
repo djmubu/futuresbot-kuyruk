@@ -1,0 +1,7 @@
+{
+ "dir": "meta_ab2",
+ "cikarilan": {},
+ "eklenen": {},
+ "A": {},
+ "B": {}
+}
