@@ -1,9 +1,9 @@
 {
- "id": "j0074_kume_retest7b",
- "box": "ovh",
+ "id": "j0065_kume_retest6c_oos",
+ "box": "box2",
  "type": "script",
  "script": "scripts/kume_stats.py",
  "args": [
-  "retest7b"
+  "retest6c_oos"
  ]
 }

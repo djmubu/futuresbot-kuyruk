@@ -160,6 +160,9 @@ ap.add_argument("--retest-level", default="signal", dest="retest_level", choices
 ap.add_argument("--retest-tol", type=float, default=0.2, dest="retest_tol", help="anchor modunda dokunus/gecersizleme toleransi %% (motor retest_confirm ile ayni: 0.2)")
 ap.add_argument("--retest-cancel", default="sl", dest="retest_cancel", choices=["sl", "close"],
                 help="iptal kurali: 'sl' = v2_sl dokunusu (varsayilan) | 'close' = ek olarak alt-bar kapanisi cipa*(1-tol) altinda (motor 'invalidated' esdegeri)")
+ap.add_argument("--retest-min-sl-pct", type=float, default=0.0, dest="retest_min_sl_pct",
+                help="E133: retest girisinde (teyit kapanisi) giris-yapisal stop mesafesi bu %%'nin altindaysa GIRME (sayac retest_stop_yakin). "
+                     "0 = kapali (eski davranis). Anomali: cipaya donuste giris stopun dibinde -> risk birimi ~0, R sisiyor (STORJ -294 R, pnl -0.04 USDT)")
 ap.add_argument("--retest-atr", type=float, default=0.0, dest="retest_atr",
                 help="geri cekilme esigi = k x ATR(14, 15m) / fiyat (yuzde yerine). >0 ise --retest-pct yok sayilir. E124 secimi: 0.5")
 ap.add_argument("--htf-paths", default="", dest="htf_paths", metavar="YOL,YOL",
@@ -570,6 +573,10 @@ class _Probe:
                                 _sonuc = ("giris", _cl); break
                         if _sonuc == "kirildi":
                             del self.retest_pending[_sym]; self._rt_count("retest_kirildi"); _pend = None
+                        elif isinstance(_sonuc, tuple) and float(getattr(A, "retest_min_sl_pct", 0) or 0) > 0 and _v2 > 0 and \
+                                (abs(_sonuc[1] - _v2) / _sonuc[1] * 100.0) < float(A.retest_min_sl_pct):
+                            # giris stopa cok yakin: yapisal risk birimi yok -> bekleyen giris iptal (girilmez)
+                            del self.retest_pending[_sym]; self._rt_count("retest_stop_yakin"); _pend = None
                         elif isinstance(_sonuc, tuple):
                             _s = _pend["sig"]
                             from decimal import Decimal as _Dz
