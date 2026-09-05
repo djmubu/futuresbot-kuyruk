@@ -1,0 +1,14 @@
+777d9b8ab873ec505613763d956413ff  smoke_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_reg/A_base_c02.trades.csv
+777d9b8ab873ec505613763d956413ff  smoke_fp_reg/A_base_c00.trades.csv
+f912284c073a067cd0df5e18967e56f9  smoke_fp_reg/A_base_c01.trades.csv
+09d8c19f07e0e0fde861b58f2bf57bea  smoke_fp_reg/A_base_c02.trades.csv
+position_id,rsi,adx,macd_hist,volume_ratio,supertrend_dir,ema_fast_pct,ema_medium_pct,a_plus_count,level_count,retest_confirmed,retest_reason,nearest_support_pct,nearest_resistance_pct,v2_rr,v3_conf_delta,confidence,breakout_score,mr_score,active_strategy,fp075,fp100,fp125,fp_up100_dk,fp_dn_dk
+p-00001,73.16,33.69,3.1e-05,1.56,1,-2.0034,-2.0034,10,29,True,break + retest + reclaim@mtf,-0.2405,1.1465,0.15578674741612164,0.08,0.33287356321839084,,0.9478,mean_reversion,1,1,1,117,
+p-00002,81.03,30.17,104.976606,8.03,1,-2.2171,-2.9925,8,15,True,break + retest + reclaim@ltf,-1.1515,,,0.08,0.7351724137931035,,,momentum,1,1,1,120,
+n 46
+fp075 28 / 46
+fp100 26 / 46
+fp125 25 / 46
+
