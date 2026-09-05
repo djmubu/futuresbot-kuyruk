@@ -1,0 +1,12 @@
+    cooldown_gecti       14
+    cooldown_gecti       5
+    cooldown_red         1
+    cooldown_gecti       28
+   15 smoke_cd_flag/A_base_c00.trades.csv
+    6 smoke_cd_flag/A_base_c01.trades.csv
+   27 smoke_cd_flag/A_base_c02.trades.csv
+   15 smoke_feat_reg/A_base_c00.trades.csv
+    6 smoke_feat_reg/A_base_c01.trades.csv
+   28 smoke_feat_reg/A_base_c02.trades.csv
+   97 total
+
